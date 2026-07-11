@@ -1,0 +1,61 @@
+<section class="page-header">
+  <div class="container">
+    <h1><%= viewedUser.name %></h1>
+    <p><%= viewedUser.email %> &middot; <%= viewedUser.phone %> &middot; Registered <%= new Date(viewedUser.createdAt).toDateString() %></p>
+  </div>
+</section>
+<section class="container">
+
+  <div class="stats-row">
+    <div class="stat-card"><span><%= appointments.length %></span><p>Total Bookings</p></div>
+    <div class="stat-card"><span><%= totalReports %></span><p>Reports Generated</p></div>
+  </div>
+
+  <% if (viewedUser.birthDetails && viewedUser.birthDetails.dob) { %>
+    <div class="result-section">
+      <h3>Birth Details on File</h3>
+      <div class="pj-grid">
+        <div class="pj-field"><div class="pj-label">Date of Birth</div><div class="pj-value"><%= new Date(viewedUser.birthDetails.dob).toDateString() %></div></div>
+        <div class="pj-field"><div class="pj-label">Time of Birth</div><div class="pj-value"><%= viewedUser.birthDetails.tob || '—' %></div></div>
+        <div class="pj-field"><div class="pj-label">Place of Birth</div><div class="pj-value"><%= viewedUser.birthDetails.pob || '—' %></div></div>
+        <div class="pj-field"><div class="pj-label">Coordinates</div><div class="pj-value"><%= viewedUser.birthDetails.latitude ? viewedUser.birthDetails.latitude + ', ' + viewedUser.birthDetails.longitude : '—' %></div></div>
+      </div>
+    </div>
+  <% } %>
+
+  <% if (totalReports > 0) { %>
+    <div class="result-section">
+      <h3>Reports Generated</h3>
+      <div class="pj-chips">
+        <% Object.keys(reportCounts).forEach(function(type) { %>
+          <span class="pj-chip"><%= type %>: <%= reportCounts[type] %></span>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <div class="result-section">
+    <h3>Booking Calendar</h3>
+    <%- include('../partials/appointments-calendar', { appointments: appointments }) %>
+  </div>
+
+  <% if (!appointments.length) { %>
+    <p>This user has no appointments yet.</p>
+  <% } else { %>
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Date</th><th>Slot</th><th>Mode</th><th>Status</th></tr></thead>
+      <tbody>
+        <% appointments.forEach(function(a) { %>
+          <tr>
+            <td><%= a.service.name %></td>
+            <td><%= a.date.toDateString() %></td>
+            <td><%= a.slot %></td>
+            <td><%= a.mode %></td>
+            <td><span class="status status-<%= a.status %>"><%= a.status %></span></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+  <a href="/admin/users" class="btn btn-outline">Back to All Users</a>
+</section>

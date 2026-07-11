@@ -1,16 +1,59 @@
 <section class="page-header"><div class="container"><h1>Admin Settings</h1></div></section>
 <section class="container">
+  <% if (success) { %><p class="form-notice"><%= success %></p><% } %>
+  <% if (errors && errors.length) { %>
+    <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
+  <% } %>
+
   <div class="auth-card" style="margin:0 0 30px;">
     <h3>Change Password</h3>
-    <% if (success) { %><p class="form-notice"><%= success %></p><% } %>
-    <% if (errors && errors.length) { %>
-      <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
-    <% } %>
     <form method="POST" action="/admin/settings/password">
       <label>Current Password<input type="password" name="currentPassword" required></label>
       <label>New Password<input type="password" name="newPassword" minlength="6" required></label>
       <label>Confirm New Password<input type="password" name="confirmPassword" minlength="6" required></label>
       <button type="submit" class="btn btn-primary btn-full">Update Password</button>
     </form>
+  </div>
+
+  <div class="auth-card" style="margin:0 0 30px;max-width:520px;">
+    <h3>Booking Time Slots</h3>
+    <p class="hint">One slot per line. These are the times offered every day (subject to existing bookings and blocked dates).</p>
+    <form method="POST" action="/admin/settings/slots">
+      <label>Slots
+        <textarea name="slots" rows="10" required><%= settings.slots.join('\n') %></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary btn-full">Save Slots</button>
+    </form>
+  </div>
+
+  <div class="auth-card" style="margin:0;max-width:520px;">
+    <h3>Blocked Dates / Holidays</h3>
+    <p class="hint">No bookings will be accepted on these dates.</p>
+    <form method="POST" action="/admin/settings/blocked-dates" style="margin-bottom:20px;">
+      <label>Date<input type="date" name="date" required></label>
+      <label>Reason (optional)<input type="text" name="reason" placeholder="e.g. Diwali, personal leave"></label>
+      <button type="submit" class="btn btn-outline btn-full">Block This Date</button>
+    </form>
+
+    <% if (!settings.blockedDates.length) { %>
+      <p class="hint">No blocked dates yet.</p>
+    <% } else { %>
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Reason</th><th></th></tr></thead>
+        <tbody>
+          <% settings.blockedDates.forEach(function(b) { %>
+            <tr>
+              <td><%= new Date(b.date).toDateString() %></td>
+              <td><%= b.reason || '—' %></td>
+              <td>
+                <form method="POST" action="/admin/settings/blocked-dates/<%= b._id %>/delete" class="inline-form">
+                  <button type="submit" class="btn btn-small btn-outline">Remove</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
   </div>
 </section>

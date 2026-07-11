@@ -1,6 +1,8 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const Service = require('../models/Service');
+const Settings = require('../models/Settings');
+const Report = require('../models/Report');
 
 function toCsvField(value) {
   const str = String(value ?? '');
@@ -73,8 +75,22 @@ exports.viewUserCalendar = async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).render('error', { title: 'Not Found', message: 'User not found.' });
 
-  const appointments = await Appointment.find({ user: user._id }).populate('service').sort('date');
-  res.render('admin/user-calendar', { title: `${user.name}'s Bookings`, viewedUser: user, appointments });
+  const [appointments, reportsByType] = await Promise.all([
+    Appointment.find({ user: user._id }).populate('service').sort('date'),
+    Report.aggregate([{ $match: { user: user._id } }, { $group: { _id: '$type', count: { $sum: 1 } } }])
+  ]);
+
+  const reportCounts = {};
+  reportsByType.forEach((r) => { reportCounts[r._id] = r.count; });
+  const totalReports = reportsByType.reduce((sum, r) => sum + r.count, 0);
+
+  res.render('admin/user-profile', {
+    title: `${user.name}'s Profile`,
+    viewedUser: user,
+    appointments,
+    reportCounts,
+    totalReports
+  });
 };
 
 exports.listServices = async (req, res) => {
@@ -177,42 +193,78 @@ exports.exportAppointmentsCsv = async (req, res) => {
   res.send(csv);
 };
 
-// ---- Admin account settings ----
+// ---- Admin settings: password, booking slots, blocked dates ----
 
-exports.showSettings = (req, res) => {
-  res.render('admin/settings', { title: 'Admin Settings', errors: [], success: null });
-};
+async function renderSettings(res, overrides = {}) {
+  const settings = await Settings.getSingleton();
+  res.render('admin/settings', {
+    title: 'Admin Settings',
+    settings,
+    errors: [],
+    success: null,
+    ...overrides
+  });
+}
+
+exports.showSettings = async (req, res) => renderSettings(res);
 
 exports.updatePassword = async (req, res) => {
   const { currentPassword, newPassword, confirmPassword } = req.body;
   const admin = await User.findById(req.session.userId);
 
   if (!(await admin.comparePassword(currentPassword))) {
-    return res.status(400).render('admin/settings', {
-      title: 'Admin Settings',
-      errors: [{ msg: 'Current password is incorrect.' }],
-      success: null
-    });
+    return renderSettings(res, { errors: [{ msg: 'Current password is incorrect.' }] });
   }
-
   if (newPassword.length < 6) {
-    return res.status(400).render('admin/settings', {
-      title: 'Admin Settings',
-      errors: [{ msg: 'New password must be at least 6 characters.' }],
-      success: null
-    });
+    return renderSettings(res, { errors: [{ msg: 'New password must be at least 6 characters.' }] });
   }
-
   if (newPassword !== confirmPassword) {
-    return res.status(400).render('admin/settings', {
-      title: 'Admin Settings',
-      errors: [{ msg: 'New password and confirmation do not match.' }],
-      success: null
-    });
+    return renderSettings(res, { errors: [{ msg: 'New password and confirmation do not match.' }] });
   }
 
   admin.password = newPassword;
   await admin.save();
 
-  res.render('admin/settings', { title: 'Admin Settings', errors: [], success: 'Password updated successfully.' });
+  return renderSettings(res, { success: 'Password updated successfully.' });
+};
+
+exports.updateSlots = async (req, res) => {
+  const { slots } = req.body;
+  const slotList = (slots || '')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (!slotList.length) {
+    return renderSettings(res, { errors: [{ msg: 'You need at least one time slot.' }] });
+  }
+
+  const settings = await Settings.getSingleton();
+  settings.slots = slotList;
+  await settings.save();
+
+  return renderSettings(res, { success: 'Booking slots updated.' });
+};
+
+exports.addBlockedDate = async (req, res) => {
+  const { date, reason } = req.body;
+  if (!date) return renderSettings(res, { errors: [{ msg: 'Please choose a date to block.' }] });
+
+  const settings = await Settings.getSingleton();
+  const already = settings.blockedDates.some((b) => b.date.toISOString().slice(0, 10) === date);
+  if (!already) {
+    settings.blockedDates.push({ date: new Date(date), reason: reason || '' });
+    settings.blockedDates.sort((a, b) => a.date - b.date);
+    await settings.save();
+  }
+
+  return renderSettings(res, { success: `${date} blocked for bookings.` });
+};
+
+exports.removeBlockedDate = async (req, res) => {
+  const settings = await Settings.getSingleton();
+  settings.blockedDates = settings.blockedDates.filter((b) => String(b._id) !== req.params.blockedId);
+  await settings.save();
+
+  return renderSettings(res, { success: 'Blocked date removed.' });
 };

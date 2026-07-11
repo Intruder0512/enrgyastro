@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
       fetch('/booking/slots?date=' + encodeURIComponent(dateInput.value))
         .then(function (r) { return r.json(); })
         .then(function (data) {
+          if (data.blocked) {
+            slotSelect.innerHTML = '<option value="">Unavailable: ' + (data.reason || 'this date is blocked') + '</option>';
+            return;
+          }
           if (!data.slots || !data.slots.length) {
             slotSelect.innerHTML = '<option value="">No slots available this day</option>';
             return;

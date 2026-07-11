@@ -13,7 +13,7 @@
             <td><%= u.phone %></td>
             <td><%= new Date(u.createdAt).toDateString() %></td>
             <td><%= u.appointmentCount %></td>
-            <td><a href="/admin/users/<%= u._id %>/calendar" class="btn btn-small btn-outline">View Calendar</a></td>
+            <td><a href="/admin/users/<%= u._id %>/calendar" class="btn btn-small btn-outline">View Profile</a></td>
           </tr>
         <% }) %>
       </tbody>

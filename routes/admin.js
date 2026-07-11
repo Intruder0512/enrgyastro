@@ -22,7 +22,10 @@ router.get('/services/:id/edit', asyncHandler(adminController.showEditServiceFor
 router.post('/services/:id', asyncHandler(adminController.updateService));
 router.post('/services/:id/toggle', asyncHandler(adminController.toggleService));
 
-router.get('/settings', adminController.showSettings);
+router.get('/settings', asyncHandler(adminController.showSettings));
 router.post('/settings/password', asyncHandler(adminController.updatePassword));
+router.post('/settings/slots', asyncHandler(adminController.updateSlots));
+router.post('/settings/blocked-dates', asyncHandler(adminController.addBlockedDate));
+router.post('/settings/blocked-dates/:blockedId/delete', asyncHandler(adminController.removeBlockedDate));
 
 module.exports = router;
