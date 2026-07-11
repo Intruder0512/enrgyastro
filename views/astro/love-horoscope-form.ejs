@@ -1,0 +1,18 @@
+<section class="page-header"><div class="container"><h1>Daily Love Horoscope</h1></div></section>
+<section class="container">
+  <form method="GET" action="/horoscope/love" class="booking-form">
+    <label>Your Sign
+      <select name="signOne" required>
+        <option value="">Select</option>
+        <% signs.forEach(function(s) { %><option value="<%= s %>"><%= s.charAt(0).toUpperCase() + s.slice(1) %></option><% }) %>
+      </select>
+    </label>
+    <label>Partner's Sign
+      <select name="signTwo" required>
+        <option value="">Select</option>
+        <% signs.forEach(function(s) { %><option value="<%= s %>"><%= s.charAt(0).toUpperCase() + s.slice(1) %></option><% }) %>
+      </select>
+    </label>
+    <button type="submit" class="btn btn-primary btn-full">Check Compatibility</button>
+  </form>
+</section>

@@ -1,0 +1,9 @@
+<section class="page-header"><div class="container"><h1>Daily Horoscope — <%= sign ? sign.charAt(0).toUpperCase() + sign.slice(1) : '' %></h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <pre class="raw-json"><%= JSON.stringify(horoscope, null, 2) %></pre>
+  <% } %>
+  <a href="/horoscope" class="btn btn-outline">Check another sign</a>
+</section>

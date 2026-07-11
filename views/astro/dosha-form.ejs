@@ -1,0 +1,11 @@
+<section class="page-header"><div class="container"><h1>Dosha Check</h1></div></section>
+<section class="container">
+  <p class="hint">Checks Mangal (Manglik) Dosha, Kaal Sarp Dosha, and Sade Sati in one report.</p>
+  <form method="POST" action="/dashboard/dosha" class="booking-form">
+    <label>Date of Birth<input type="date" name="dob" required></label>
+    <label>Time of Birth<input type="time" name="tob" required></label>
+    <label>Latitude<input type="number" step="any" name="lat" placeholder="e.g. 28.6139" required></label>
+    <label>Longitude<input type="number" step="any" name="lng" placeholder="e.g. 77.2090" required></label>
+    <button type="submit" class="btn btn-primary btn-full">Check Doshas</button>
+  </form>
+</section>

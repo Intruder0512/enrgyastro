@@ -1,0 +1,20 @@
+<section class="page-header"><div class="container"><h1>Daily Horoscope</h1></div></section>
+<section class="container">
+  <form method="GET" action="/horoscope" class="booking-form">
+    <label>Zodiac Sign
+      <select name="sign" required>
+        <option value="">Select your sign</option>
+        <% signs.forEach(function(s) { %><option value="<%= s %>"><%= s.charAt(0).toUpperCase() + s.slice(1) %></option><% }) %>
+      </select>
+    </label>
+    <label>Type (optional)
+      <select name="type">
+        <option value="">General</option>
+        <option value="love">Love</option>
+        <option value="career">Career</option>
+        <option value="health">Health</option>
+      </select>
+    </label>
+    <button type="submit" class="btn btn-primary btn-full">Get Horoscope</button>
+  </form>
+</section>

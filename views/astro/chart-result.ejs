@@ -1,0 +1,8 @@
+<section class="page-header"><div class="container"><h1>Your Birth Chart</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <div class="chart-svg-wrap"><%- svg %></div>
+  <% } %>
+</section>

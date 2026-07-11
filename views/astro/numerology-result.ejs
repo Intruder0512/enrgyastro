@@ -1,0 +1,13 @@
+<section class="page-header"><div class="container"><h1>Your Numerology Report</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <div class="stats-row">
+      <div class="stat-card"><span><%= lifePath?.number ?? '—' %></span><p>Life Path Number</p></div>
+      <div class="stat-card"><span><%= destiny?.number ?? '—' %></span><p>Destiny Number</p></div>
+    </div>
+    <% if (lifePath?.description) { %><p><%= lifePath.description %></p><% } %>
+    <% if (destiny?.description) { %><p><%= destiny.description %></p><% } %>
+  <% } %>
+</section>

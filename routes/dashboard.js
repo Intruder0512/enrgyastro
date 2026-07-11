@@ -3,6 +3,8 @@ const router = express.Router();
 const { requireAuth } = require('../middleware/auth');
 const appointmentController = require('../controllers/appointmentController');
 const astroController = require('../controllers/astroController');
+const extraAstroController = require('../controllers/extraAstroController');
+const doshaChartController = require('../controllers/doshaChartController');
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 
@@ -21,5 +23,14 @@ router.post('/kundli', asyncHandler(astroController.generateKundli));
 
 router.get('/matching', astroController.showMatchingForm);
 router.post('/matching', asyncHandler(astroController.generateMatching));
+
+router.get('/numerology', extraAstroController.showNumerologyForm);
+router.post('/numerology', asyncHandler(extraAstroController.calculateNumerology));
+
+router.get('/dosha', doshaChartController.showDoshaForm);
+router.post('/dosha', asyncHandler(doshaChartController.checkDosha));
+
+router.get('/chart', doshaChartController.showChartForm);
+router.post('/chart', asyncHandler(doshaChartController.generateChart));
 
 module.exports = router;

@@ -1,0 +1,13 @@
+<section class="page-header"><div class="container"><h1>Dosha Report</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <h3>Mangal Dosha</h3>
+    <pre class="raw-json"><%= JSON.stringify(result.mangal, null, 2) %></pre>
+    <h3>Kaal Sarp Dosha</h3>
+    <pre class="raw-json"><%= JSON.stringify(result.kaalSarp, null, 2) %></pre>
+    <h3>Sade Sati</h3>
+    <pre class="raw-json"><%= JSON.stringify(result.sadeSati, null, 2) %></pre>
+  <% } %>
+</section>

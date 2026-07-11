@@ -1,0 +1,9 @@
+<section class="page-header"><div class="container"><h1>Love Horoscope</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <pre class="raw-json"><%= JSON.stringify(result, null, 2) %></pre>
+  <% } %>
+  <a href="/horoscope/love" class="btn btn-outline">Try another pair</a>
+</section>

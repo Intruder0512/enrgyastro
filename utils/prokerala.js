@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 // Prokerala uses OAuth2 client-credentials: exchange client id/secret for a
-// short-lived bearer token, then call the v2 astrology endpoints with it.
-// We cache the token in memory until shortly before it expires.
+// short-lived bearer token, then call the v2 endpoints with it. Token is
+// cached in memory until shortly before it expires.
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
@@ -22,70 +22,103 @@ async function getAccessToken() {
   );
 
   cachedToken = data.access_token;
-  // Refresh 60s before actual expiry to be safe
   tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
   return cachedToken;
 }
 
-async function callProkerala(endpoint, params) {
+// PROKERALA_BASE_URL should be set to https://api.prokerala.com/v2 —
+// every endpoint below supplies its own full path from there
+// (e.g. astrology/panchang, horoscope/daily, numerology/life-path-number),
+// verified directly against Prokerala's official SDK source.
+async function callProkerala(path, params) {
   const token = await getAccessToken();
-  const { data } = await axios.get(`${process.env.PROKERALA_BASE_URL}/${endpoint}`, {
+  const { data } = await axios.get(`${process.env.PROKERALA_BASE_URL}/${path}`, {
     headers: { Authorization: `Bearer ${token}` },
     params
   });
   return data;
 }
 
-// datetime must be ISO 8601 with offset, e.g. 2026-07-11T10:30:00+05:30
+// The Chart endpoint returns raw SVG text, not JSON — needs its own call
+// that doesn't try to parse the body as JSON.
+async function callProkeralaRaw(path, params) {
+  const token = await getAccessToken();
+  const { data } = await axios.get(`${process.env.PROKERALA_BASE_URL}/${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+    responseType: 'text'
+  });
+  return data;
+}
+
 function formatCoordinates(lat, lng) {
   return `${lat},${lng}`;
 }
 
 const prokerala = {
-  // Daily Panchang for the homepage widget
-  getPanchang: (lat, lng, datetime) =>
-    callProkerala('panchang', {
-      ayanamsa: 1, // Lahiri, standard for Vedic/Indian panchang
-      coordinates: formatCoordinates(lat, lng),
-      datetime
-    }),
+  // ---- Daily Panchang ----
+  getPanchang: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/panchang', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
 
-  // Full birth chart / Kundli
-  getKundli: (lat, lng, datetime) =>
-    callProkerala('kundli/advanced', {
+  // ---- Vedic Horoscope / Kundli ----
+  getKundli: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/kundli/advanced', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  getDasha: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/dasha-periods', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  // Doshas are three separate endpoints on Prokerala, not one combined call
+  getMangalDosha: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/mangal-dosha/advanced', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  getKaalSarpDosha: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/kaal-sarp-dosha', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  getSadeSati: (lat, lng, datetime, la = 'en') =>
+    callProkerala('astrology/sade-sati/advanced', { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  // North/South Indian style birth chart — returns raw SVG markup
+  getChartSvg: (lat, lng, datetime, chartType = 'rasi', chartStyle = 'south-indian', la = 'en') =>
+    callProkeralaRaw('astrology/chart', {
       ayanamsa: 1,
       coordinates: formatCoordinates(lat, lng),
       datetime,
-      la: 'en'
-    }),
-
-  // Vimshottari Dasha
-  getDasha: (lat, lng, datetime) =>
-    callProkerala('dasha-periods', {
-      ayanamsa: 1,
-      coordinates: formatCoordinates(lat, lng),
-      datetime,
-      la: 'en'
-    }),
-
-  // Dosha checks: Manglik / Kaal Sarp / Sade Sati
-  getDosha: (lat, lng, datetime) =>
-    callProkerala('kundli-dosha', {
-      ayanamsa: 1,
-      coordinates: formatCoordinates(lat, lng),
-      datetime,
-      la: 'en'
+      chart_type: chartType,
+      chart_style: chartStyle,
+      la,
+      format: 'svg'
     }),
 
   // 36-point Ashtakoota Guna Milan matching between two birth charts
-  getMatching: (boy, girl) =>
-    callProkerala('match-making/guna-milan', {
+  getMatching: (boy, girl, la = 'en') =>
+    callProkerala('astrology/kundli-matching/advanced', {
       ayanamsa: 1,
       girl_coordinates: formatCoordinates(girl.lat, girl.lng),
       girl_dob: girl.datetime,
       boy_coordinates: formatCoordinates(boy.lat, boy.lng),
       boy_dob: boy.datetime,
-      la: 'en'
+      la
+    }),
+
+  // ---- Daily Horoscope ----
+  getDailyHoroscope: (sign, datetime) =>
+    callProkerala('horoscope/daily', { datetime, sign }),
+
+  getDailyHoroscopeAdvanced: (sign, type, datetime) =>
+    callProkerala('horoscope/daily/advanced', { datetime, sign, type }),
+
+  getDailyLoveHoroscope: (signOne, signTwo, datetime) =>
+    callProkerala('horoscope/daily/love-compatibility', { datetime, sign_one: signOne, sign_two: signTwo }),
+
+  // ---- Numerology ----
+  getNumerologyLifePath: (datetime) =>
+    callProkerala('numerology/life-path-number', { datetime }),
+
+  getNumerologyDestiny: (firstName, middleName, lastName) =>
+    callProkerala('numerology/destiny-number', {
+      first_name: firstName,
+      middle_name: middleName || '',
+      last_name: lastName || ''
     })
 };
 
