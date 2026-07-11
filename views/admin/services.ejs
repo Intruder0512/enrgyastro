@@ -1,0 +1,21 @@
+<section class="page-header"><div class="container"><h1>Manage Services</h1></div></section>
+<section class="container">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Active</th><th></th></tr></thead>
+    <tbody>
+      <% services.forEach(function(s) { %>
+        <tr>
+          <td><%= s.name %></td>
+          <td><%= s.category %></td>
+          <td><%= s.price === 0 ? 'Free' : '₹' + s.price %></td>
+          <td><span class="status status-<%= s.isActive ? 'confirmed' : 'cancelled' %>"><%= s.isActive ? 'Active' : 'Hidden' %></span></td>
+          <td>
+            <form method="POST" action="/admin/services/<%= s._id %>/toggle" class="inline-form">
+              <button type="submit" class="btn btn-small btn-outline"><%= s.isActive ? 'Hide' : 'Activate' %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>

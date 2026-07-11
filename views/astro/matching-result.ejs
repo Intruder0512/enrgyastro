@@ -1,0 +1,9 @@
+<section class="page-header"><div class="container"><h1>Match Result</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <pre class="raw-json"><%= JSON.stringify(match, null, 2) %></pre>
+    <p class="hint">A designed Guna Milan scorecard is coming in Phase 2 — this raw view confirms the API integration is live.</p>
+  <% } %>
+</section>

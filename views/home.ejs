@@ -1,0 +1,57 @@
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <h1>Astrology guidance rooted in tradition, delivered your way.</h1>
+      <p>Kundli, Panchang, Matchmaking, Palm Reading and Vastu — personal consultations online or in person.</p>
+      <div class="hero-actions">
+        <a href="/booking" class="btn btn-primary btn-large">Book a Consultation</a>
+        <a href="/dashboard/kundli" class="btn btn-outline btn-large">Get Free Kundli</a>
+      </div>
+    </div>
+    <div id="panchang-widget-slot" class="hero-widget">
+      <p class="widget-loading">Loading today's Panchang…</p>
+    </div>
+  </div>
+</section>
+
+<section class="services-preview">
+  <div class="container">
+    <h2>Our Services</h2>
+    <div class="service-grid">
+      <% services.forEach(function(s) { %>
+        <div class="service-card">
+          <span class="service-tag"><%= s.category %></span>
+          <h3><%= s.name %></h3>
+          <p><%= s.shortDescription %></p>
+          <div class="service-card-footer">
+            <strong><%= s.price === 0 ? 'Free' : '₹' + s.price %></strong>
+            <a href="/booking?service=<%= s._id %>" class="btn btn-small btn-ghost">Book</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <div class="center-cta">
+      <a href="/services" class="btn btn-outline">View All Services</a>
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <div class="container">
+    <h2>How it works</h2>
+    <div class="steps-grid">
+      <div class="step"><span>1</span><h4>Choose a service</h4><p>Pick Kundli, Matching, Palmistry, Vastu, or a general consultation.</p></div>
+      <div class="step"><span>2</span><h4>Book your slot</h4><p>Pick an online or in-person time that works for you.</p></div>
+      <div class="step"><span>3</span><h4>Get your reading</h4><p>Receive personalized guidance based on your birth details.</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  fetch('/panchang/widget?widget=1')
+    .then(function (r) { return r.text(); })
+    .then(function (html) { document.getElementById('panchang-widget-slot').innerHTML = html; })
+    .catch(function () {
+      document.getElementById('panchang-widget-slot').innerHTML = '<p class="widget-error">Panchang unavailable right now.</p>';
+    });
+</script>

@@ -1,0 +1,9 @@
+<section class="page-header"><div class="container"><h1>Your Kundli</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <pre class="raw-json"><%= JSON.stringify(kundli, null, 2) %></pre>
+    <p class="hint">A designed chart view is coming in Phase 2 — this raw view confirms the API integration is live.</p>
+  <% } %>
+</section>

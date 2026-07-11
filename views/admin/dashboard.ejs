@@ -1,0 +1,26 @@
+<section class="page-header"><div class="container"><h1>Admin Dashboard</h1></div></section>
+<section class="container">
+  <div class="stats-row">
+    <div class="stat-card"><span><%= stats.pendingCount %></span><p>Pending Appointments</p></div>
+    <div class="stat-card"><span><%= stats.todayCount %></span><p>Today's Appointments</p></div>
+    <div class="stat-card"><span><%= stats.totalUsers %></span><p>Registered Users</p></div>
+  </div>
+
+  <h2>Upcoming Appointments</h2>
+  <table class="data-table">
+    <thead><tr><th>User</th><th>Service</th><th>Date</th><th>Slot</th><th>Status</th></tr></thead>
+    <tbody>
+      <% upcoming.forEach(function(a) { %>
+        <tr>
+          <td><%= a.user.name %><br><small><%= a.user.phone %></small></td>
+          <td><%= a.service.name %></td>
+          <td><%= a.date.toDateString() %></td>
+          <td><%= a.slot %></td>
+          <td><span class="status status-<%= a.status %>"><%= a.status %></span></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <a href="/admin/appointments" class="btn btn-outline">View All Appointments</a>
+  <a href="/admin/services" class="btn btn-outline">Manage Services</a>
+</section>

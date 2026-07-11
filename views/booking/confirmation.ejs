@@ -1,0 +1,9 @@
+<section class="container confirmation-page">
+  <div class="confirmation-card">
+    <h1>Booking Confirmed 🎉</h1>
+    <p><strong><%= appointment.service.name %></strong></p>
+    <p><%= appointment.date.toDateString() %> &middot; <%= appointment.slot %> &middot; <%= appointment.mode %></p>
+    <p>Status: <span class="status status-<%= appointment.status %>"><%= appointment.status %></span></p>
+    <a href="/dashboard/appointments" class="btn btn-primary">View My Appointments</a>
+  </div>
+</section>

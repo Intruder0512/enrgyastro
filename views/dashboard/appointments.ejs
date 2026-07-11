@@ -1,0 +1,21 @@
+<section class="page-header"><div class="container"><h1>My Appointments</h1></div></section>
+<section class="container">
+  <% if (!appointments.length) { %>
+    <p>No appointments yet. <a href="/booking">Book one now</a>.</p>
+  <% } else { %>
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Date</th><th>Slot</th><th>Mode</th><th>Status</th></tr></thead>
+      <tbody>
+        <% appointments.forEach(function(a) { %>
+          <tr>
+            <td><%= a.service.name %></td>
+            <td><%= a.date.toDateString() %></td>
+            <td><%= a.slot %></td>
+            <td><%= a.mode %></td>
+            <td><span class="status status-<%= a.status %>"><%= a.status %></span></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>

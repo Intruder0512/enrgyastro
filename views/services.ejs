@@ -1,0 +1,19 @@
+<section class="page-header">
+  <div class="container"><h1>Our Services</h1></div>
+</section>
+<section class="container services-page">
+  <div class="service-grid">
+    <% services.forEach(function(s) { %>
+      <div class="service-card">
+        <span class="service-tag"><%= s.category %></span>
+        <h3><%= s.name %></h3>
+        <p><%= s.description %></p>
+        <p class="service-meta"><%= s.durationMinutes %> mins &middot; <%= s.mode.join(' / ') %></p>
+        <div class="service-card-footer">
+          <strong><%= s.price === 0 ? 'Free' : '₹' + s.price %></strong>
+          <a href="/booking?service=<%= s._id %>" class="btn btn-small btn-primary">Book Now</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>

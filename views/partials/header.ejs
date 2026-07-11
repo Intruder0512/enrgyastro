@@ -1,0 +1,27 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">Enrgy<span>Astro</span></a>
+    <nav class="main-nav">
+      <a href="/services">Services</a>
+      <a href="/panchang">Panchang</a>
+      <a href="/dashboard/kundli">Free Kundli</a>
+      <a href="/dashboard/matching">Matching</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <% if (currentUser) { %>
+        <% if (currentUser.role === 'admin') { %>
+          <a href="/admin" class="btn btn-ghost">Admin</a>
+        <% } else { %>
+          <a href="/dashboard" class="btn btn-ghost">My Dashboard</a>
+        <% } %>
+        <a href="/logout" class="btn btn-outline">Logout</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-ghost">Login</a>
+        <a href="/register" class="btn btn-primary">Sign Up</a>
+      <% } %>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>

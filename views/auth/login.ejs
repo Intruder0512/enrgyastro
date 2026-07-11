@@ -1,0 +1,14 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Login</h1>
+    <% if (errors && errors.length) { %>
+      <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
+    <% } %>
+    <form method="POST" action="/login">
+      <label>Email<input type="email" name="email" required></label>
+      <label>Password<input type="password" name="password" required></label>
+      <button type="submit" class="btn btn-primary btn-full">Login</button>
+    </form>
+    <p class="auth-switch">New here? <a href="/register">Create an account</a></p>
+  </div>
+</section>

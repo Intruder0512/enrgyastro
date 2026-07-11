@@ -1,0 +1,22 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <a href="/" class="logo">Enrgy<span>Astro</span></a>
+      <p>Personal astrology consultation — Kundli, Panchang, Matching, Palmistry &amp; Vastu. Online and in-person.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Services</h4>
+      <a href="/services">All Services</a>
+      <a href="/booking">Book Consultation</a>
+      <a href="/dashboard/kundli">Free Kundli</a>
+    </div>
+    <div class="footer-links">
+      <h4>Contact</h4>
+      <a href="/contact">Get in Touch</a>
+      <a href="https://wa.me/<%= process.env.WHATSAPP_NUMBER || '' %>" target="_blank" rel="noopener">WhatsApp Us</a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <%= new Date().getFullYear() %> EnrgyAstro. All rights reserved.</p>
+  </div>
+</footer>

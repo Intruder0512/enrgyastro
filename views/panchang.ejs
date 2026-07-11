@@ -1,0 +1,15 @@
+<section class="page-header"><div class="container"><h1>Today's Panchang</h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else { %>
+    <table class="panchang-table">
+      <tr><th>Tithi</th><td><%= panchang.tithi?.[0]?.name || '—' %></td></tr>
+      <tr><th>Nakshatra</th><td><%= panchang.nakshatra?.[0]?.name || '—' %></td></tr>
+      <tr><th>Yoga</th><td><%= panchang.yoga?.[0]?.name || '—' %></td></tr>
+      <tr><th>Karana</th><td><%= panchang.karana?.[0]?.name || '—' %></td></tr>
+      <tr><th>Sunrise</th><td><%= panchang.sunrise || '—' %></td></tr>
+      <tr><th>Sunset</th><td><%= panchang.sunset || '—' %></td></tr>
+    </table>
+  <% } %>
+</section>

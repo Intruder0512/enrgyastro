@@ -1,0 +1,47 @@
+<section class="page-header"><div class="container"><h1>Book a Consultation</h1></div></section>
+<section class="container">
+  <form method="POST" action="/booking" class="booking-form" id="booking-form">
+    <label>Service
+      <select name="serviceId" required>
+        <option value="">Select a service</option>
+        <% services.forEach(function(s) { %>
+          <option value="<%= s._id %>" <%= (preselect === String(s._id)) ? 'selected' : '' %>>
+            <%= s.name %> — <%= s.price === 0 ? 'Free' : '₹' + s.price %>
+          </option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>Mode
+      <select name="mode" required>
+        <option value="online">Online</option>
+        <option value="offline">In-person (Offline)</option>
+      </select>
+    </label>
+
+    <label>Preferred Date
+      <input type="date" name="date" id="booking-date" required>
+    </label>
+
+    <label>Available Slot
+      <select name="slot" id="booking-slot" required>
+        <option value="">Pick a date first</option>
+      </select>
+    </label>
+
+    <fieldset>
+      <legend>Your Birth Details (for accurate readings)</legend>
+      <label>Date of Birth<input type="date" name="dob" required></label>
+      <label>Time of Birth<input type="time" name="tob" required></label>
+      <label>Place of Birth<input type="text" name="pob" placeholder="City, State" required></label>
+      <label>Latitude<input type="number" step="any" name="latitude" placeholder="e.g. 28.6139" required></label>
+      <label>Longitude<input type="number" step="any" name="longitude" placeholder="e.g. 77.2090" required></label>
+    </fieldset>
+
+    <label>Your Concern / Notes
+      <textarea name="concern" rows="4" placeholder="Briefly describe what you'd like guidance on"></textarea>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-full">Confirm Booking</button>
+  </form>
+</section>

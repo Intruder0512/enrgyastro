@@ -1,0 +1,29 @@
+<section class="page-header"><div class="container"><h1>All Appointments</h1></div></section>
+<section class="container">
+  <table class="data-table">
+    <thead><tr><th>User</th><th>Service</th><th>Date</th><th>Slot</th><th>Mode</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody>
+      <% appointments.forEach(function(a) { %>
+        <tr>
+          <td><%= a.user.name %><br><small><%= a.user.email %></small></td>
+          <td><%= a.service.name %></td>
+          <td><%= a.date.toDateString() %></td>
+          <td><%= a.slot %></td>
+          <td><%= a.mode %></td>
+          <td><span class="status status-<%= a.status %>"><%= a.status %></span></td>
+          <td>
+            <form method="POST" action="/admin/appointments/<%= a._id %>/status" class="inline-form">
+              <select name="status">
+                <option value="pending" <%= a.status==='pending'?'selected':'' %>>Pending</option>
+                <option value="confirmed" <%= a.status==='confirmed'?'selected':'' %>>Confirmed</option>
+                <option value="completed" <%= a.status==='completed'?'selected':'' %>>Completed</option>
+                <option value="cancelled" <%= a.status==='cancelled'?'selected':'' %>>Cancelled</option>
+              </select>
+              <button type="submit" class="btn btn-small btn-outline">Update</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>

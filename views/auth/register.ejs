@@ -1,0 +1,16 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Create Account</h1>
+    <% if (errors && errors.length) { %>
+      <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
+    <% } %>
+    <form method="POST" action="/register">
+      <label>Full Name<input type="text" name="name" value="<%= old.name || '' %>" required></label>
+      <label>Email<input type="email" name="email" value="<%= old.email || '' %>" required></label>
+      <label>Phone<input type="tel" name="phone" value="<%= old.phone || '' %>" required></label>
+      <label>Password<input type="password" name="password" minlength="6" required></label>
+      <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
+  </div>
+</section>
