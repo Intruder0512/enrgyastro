@@ -2,8 +2,21 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
+  <% } else if (horoscope && horoscope.daily_prediction) { %>
+    <div class="result-hero">
+      <div class="result-stat"><span><%= horoscope.daily_prediction.sign_name %></span><p><%= horoscope.daily_prediction.date %></p></div>
+    </div>
+    <div class="result-section">
+      <p style="font-size:1.05rem;"><%= horoscope.daily_prediction.prediction %></p>
+    </div>
+  <% } else if (horoscope && horoscope.daily_predictions) { %>
+    <div class="result-section" id="pretty-root"></div>
+    <script type="application/json" id="result-data"><%- JSON.stringify(horoscope.daily_predictions).replace(/</g, '\u003c') %></script>
+    <script>
+      renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+    </script>
   <% } else { %>
-    <pre class="raw-json"><%= JSON.stringify(horoscope, null, 2) %></pre>
+    <p class="widget-error">No horoscope data returned.</p>
   <% } %>
   <a href="/horoscope" class="btn btn-outline">Check another sign</a>
 </section>

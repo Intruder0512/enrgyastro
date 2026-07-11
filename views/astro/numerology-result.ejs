@@ -3,11 +3,21 @@
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
   <% } else { %>
-    <div class="stats-row">
-      <div class="stat-card"><span><%= lifePath?.number ?? '—' %></span><p>Life Path Number</p></div>
-      <div class="stat-card"><span><%= destiny?.number ?? '—' %></span><p>Destiny Number</p></div>
+    <div class="result-hero">
+      <div class="result-stat"><span><%= lifePath?.number ?? '—' %></span><p>Life Path Number</p></div>
+      <div class="result-stat"><span><%= destiny?.number ?? '—' %></span><p>Destiny Number</p></div>
     </div>
-    <% if (lifePath?.description) { %><p><%= lifePath.description %></p><% } %>
-    <% if (destiny?.description) { %><p><%= destiny.description %></p><% } %>
+    <% if (lifePath?.description) { %>
+      <div class="result-section">
+        <h3><%= lifePath.name || 'Life Path Number' %></h3>
+        <p><%= lifePath.description %></p>
+      </div>
+    <% } %>
+    <% if (destiny?.description) { %>
+      <div class="result-section">
+        <h3><%= destiny.name || 'Destiny Number' %></h3>
+        <p><%= destiny.description %></p>
+      </div>
+    <% } %>
   <% } %>
 </section>

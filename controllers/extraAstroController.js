@@ -37,21 +37,22 @@ exports.calculateNumerology = async (req, res) => {
     if (cached) {
       ({ lifePath, destiny } = cached.responseData);
     } else {
-      [lifePath, destiny] = await Promise.all([
+      const [lifePathRes, destinyRes] = await Promise.all([
         prokerala.getNumerologyLifePath(datetime),
         prokerala.getNumerologyDestiny(firstName, middleName || '', lastName || '')
       ]);
+      lifePath = lifePathRes.data.life_path_number;
+      destiny = destinyRes.data.destiny_number;
+
       if (req.session.userId) {
         await Report.create({
           user: req.session.userId,
           type: 'numerology',
           inputHash,
           requestParams: params,
-          responseData: { lifePath: lifePath.data, destiny: destiny.data }
+          responseData: { lifePath, destiny }
         });
       }
-      lifePath = lifePath.data;
-      destiny = destiny.data;
     }
 
     res.render('astro/numerology-result', { title: 'Your Numerology Report', lifePath, destiny, error: null });

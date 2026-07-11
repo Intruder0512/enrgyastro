@@ -2,6 +2,17 @@ const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const Service = require('../models/Service');
 
+function toCsvField(value) {
+  const str = String(value ?? '');
+  return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+}
+
+function toCsv(rows, fields) {
+  const header = fields.join(',');
+  const body = rows.map((row) => fields.map((f) => toCsvField(row[f])).join(',')).join('\n');
+  return header + '\n' + body;
+}
+
 exports.dashboard = async (req, res) => {
   const [pendingCount, todayCount, totalUsers, upcoming] = await Promise.all([
     Appointment.countDocuments({ status: 'pending' }),
@@ -71,9 +82,137 @@ exports.listServices = async (req, res) => {
   res.render('admin/services', { title: 'Manage Services', services });
 };
 
+exports.showNewServiceForm = (req, res) => {
+  res.render('admin/service-form', { title: 'Add New Service', service: null, errors: [] });
+};
+
+exports.createService = async (req, res) => {
+  const { name, category, description, shortDescription, price, durationMinutes, mode } = req.body;
+  const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+  try {
+    await Service.create({
+      name,
+      slug,
+      category,
+      description,
+      shortDescription,
+      price: Number(price) || 0,
+      durationMinutes: Number(durationMinutes) || 30,
+      mode: Array.isArray(mode) ? mode : [mode].filter(Boolean),
+      isActive: true
+    });
+    res.redirect('/admin/services');
+  } catch (err) {
+    res.status(400).render('admin/service-form', {
+      title: 'Add New Service',
+      service: req.body,
+      errors: [{ msg: err.code === 11000 ? 'A service with a similar name already exists.' : err.message }]
+    });
+  }
+};
+
+exports.showEditServiceForm = async (req, res) => {
+  const service = await Service.findById(req.params.id);
+  if (!service) return res.status(404).render('error', { title: 'Not Found', message: 'Service not found.' });
+  res.render('admin/service-form', { title: 'Edit Service', service, errors: [] });
+};
+
+exports.updateService = async (req, res) => {
+  const { name, category, description, shortDescription, price, durationMinutes, mode } = req.body;
+
+  try {
+    await Service.findByIdAndUpdate(req.params.id, {
+      name,
+      category,
+      description,
+      shortDescription,
+      price: Number(price) || 0,
+      durationMinutes: Number(durationMinutes) || 30,
+      mode: Array.isArray(mode) ? mode : [mode].filter(Boolean)
+    });
+    res.redirect('/admin/services');
+  } catch (err) {
+    const service = await Service.findById(req.params.id);
+    res.status(400).render('admin/service-form', {
+      title: 'Edit Service',
+      service: { ...service.toObject(), ...req.body },
+      errors: [{ msg: err.message }]
+    });
+  }
+};
+
 exports.toggleService = async (req, res) => {
   const service = await Service.findById(req.params.id);
   service.isActive = !service.isActive;
   await service.save();
   res.redirect('/admin/services');
+};
+
+// ---- Appointments CSV export ----
+
+exports.exportAppointmentsCsv = async (req, res) => {
+  const appointments = await Appointment.find().populate('user service').sort('-date');
+  const rows = appointments.map((a) => ({
+    date: a.date.toISOString().slice(0, 10),
+    slot: a.slot,
+    service: a.service?.name || '',
+    user_name: a.user?.name || '',
+    user_email: a.user?.email || '',
+    user_phone: a.user?.phone || '',
+    mode: a.mode,
+    status: a.status,
+    payment_status: a.paymentStatus,
+    amount: a.amount,
+    concern: a.concern || ''
+  }));
+
+  const fields = ['date', 'slot', 'service', 'user_name', 'user_email', 'user_phone', 'mode', 'status', 'payment_status', 'amount', 'concern'];
+  const csv = toCsv(rows, fields);
+
+  res.set({
+    'Content-Type': 'text/csv',
+    'Content-Disposition': `attachment; filename="enrgyastro-appointments-${new Date().toISOString().slice(0, 10)}.csv"`
+  });
+  res.send(csv);
+};
+
+// ---- Admin account settings ----
+
+exports.showSettings = (req, res) => {
+  res.render('admin/settings', { title: 'Admin Settings', errors: [], success: null });
+};
+
+exports.updatePassword = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const admin = await User.findById(req.session.userId);
+
+  if (!(await admin.comparePassword(currentPassword))) {
+    return res.status(400).render('admin/settings', {
+      title: 'Admin Settings',
+      errors: [{ msg: 'Current password is incorrect.' }],
+      success: null
+    });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).render('admin/settings', {
+      title: 'Admin Settings',
+      errors: [{ msg: 'New password must be at least 6 characters.' }],
+      success: null
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).render('admin/settings', {
+      title: 'Admin Settings',
+      errors: [{ msg: 'New password and confirmation do not match.' }],
+      success: null
+    });
+  }
+
+  admin.password = newPassword;
+  await admin.save();
+
+  res.render('admin/settings', { title: 'Admin Settings', errors: [], success: 'Password updated successfully.' });
 };

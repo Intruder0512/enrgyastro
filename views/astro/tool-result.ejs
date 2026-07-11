@@ -5,6 +5,10 @@
   <% } else if (tool.isSvg) { %>
     <div class="chart-svg-wrap"><%- result.svg %></div>
   <% } else { %>
-    <pre class="raw-json"><%= JSON.stringify(result.data, null, 2) %></pre>
+    <div id="pretty-root"></div>
+    <script type="application/json" id="result-data"><%- JSON.stringify(result.data).replace(/</g, '\u003c') %></script>
+    <script>
+      renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+    </script>
   <% } %>
 </section>

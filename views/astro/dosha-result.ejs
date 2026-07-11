@@ -2,12 +2,46 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
-  <% } else { %>
-    <h3>Mangal Dosha</h3>
-    <pre class="raw-json"><%= JSON.stringify(result.mangal, null, 2) %></pre>
-    <h3>Kaal Sarp Dosha</h3>
-    <pre class="raw-json"><%= JSON.stringify(result.kaalSarp, null, 2) %></pre>
-    <h3>Sade Sati</h3>
-    <pre class="raw-json"><%= JSON.stringify(result.sadeSati, null, 2) %></pre>
+  <% } else {
+    var m = result.mangal || {};
+    var k = result.kaalSarp || {};
+    var s = result.sadeSati || {};
+  %>
+    <div class="result-hero">
+      <div class="result-stat"><span class="pj-badge pj-badge-<%= m.has_dosha ? 'yes' : 'no' %>"><%= m.has_dosha ? 'Present' : 'Clear' %></span><p>Mangal Dosha</p></div>
+      <div class="result-stat"><span class="pj-badge pj-badge-<%= k.has_dosha ? 'yes' : 'no' %>"><%= k.has_dosha ? 'Present' : 'Clear' %></span><p>Kaal Sarp Dosha</p></div>
+      <div class="result-stat"><span class="pj-badge pj-badge-<%= s.is_in_sade_sati ? 'yes' : 'no' %>"><%= s.is_in_sade_sati ? 'Active' : 'Not Active' %></span><p>Sade Sati</p></div>
+    </div>
+
+    <div class="result-section">
+      <h3>Mangal (Manglik) Dosha</h3>
+      <% if (m.type) { %><p>Type: <strong><%= m.type %></strong></p><% } %>
+      <% if (m.description) { %><p><%= m.description %></p><% } %>
+      <% if (m.remedies && m.remedies.length) { %>
+        <h4>Remedies</h4>
+        <ul><% m.remedies.forEach(function(r) { %><li><%= typeof r === 'string' ? r : (r.description || JSON.stringify(r)) %></li><% }) %></ul>
+      <% } %>
+    </div>
+
+    <div class="result-section">
+      <h3>Kaal Sarp Dosha</h3>
+      <% if (k.type || k.dosha_type) { %><p>Type: <strong><%= k.type || k.dosha_type %></strong></p><% } %>
+      <% if (k.description) { %><p><%= k.description %></p><% } %>
+    </div>
+
+    <div class="result-section">
+      <h3>Sade Sati</h3>
+      <% if (s.transit_phase) { %><p>Phase: <strong><%= s.transit_phase %></strong></p><% } %>
+      <% if (s.description) { %><p><%= s.description %></p><% } %>
+    </div>
+
+    <details class="details-toggle">
+      <summary>View full raw data</summary>
+      <div id="pretty-root"></div>
+    </details>
+    <script type="application/json" id="result-data"><%- JSON.stringify(result).replace(/</g, '\u003c') %></script>
+    <script>
+      renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+    </script>
   <% } %>
 </section>

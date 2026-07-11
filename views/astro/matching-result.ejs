@@ -2,8 +2,70 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
-  <% } else { %>
-    <pre class="raw-json"><%= JSON.stringify(match, null, 2) %></pre>
-    <p class="hint">A designed Guna Milan scorecard is coming in Phase 2 — this raw view confirms the API integration is live.</p>
+  <% } else {
+    var gm = match.guna_milan || {};
+    var koots = gm.guna || [];
+    var pct = gm.maximum_points ? Math.round((gm.total_points / gm.maximum_points) * 100) : null;
+  %>
+    <div class="result-hero">
+      <div class="result-stat"><span><%= gm.total_points ?? '—' %> / <%= gm.maximum_points ?? '36' %></span><p>Guna Milan Score</p></div>
+      <% if (pct !== null) { %><div class="result-stat"><span><%= pct %>%</span><p>Compatibility</p></div><% } %>
+    </div>
+
+    <% if (match.message && match.message.description) { %>
+      <div class="result-section">
+        <p><%= match.message.description %></p>
+      </div>
+    <% } %>
+
+    <% if (koots.length) { %>
+      <div class="result-section">
+        <h3>Koota Breakdown</h3>
+        <table class="data-table">
+          <thead><tr><th>Koota</th><th>Bride</th><th>Groom</th><th>Score</th></tr></thead>
+          <tbody>
+            <% koots.forEach(function(k) { %>
+              <tr>
+                <td><%= k.name %></td>
+                <td><%= k.girl_koot %></td>
+                <td><%= k.boy_koot %></td>
+                <td><%= k.obtained_points %> / <%= k.maximum_points %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <div class="result-section">
+      <h3>Mangal Dosha</h3>
+      <div class="pj-grid">
+        <div class="pj-field">
+          <div class="pj-label">Bride</div>
+          <div class="pj-value">
+            <span class="pj-badge pj-badge-<%= match.girl_mangal_dosha_details?.has_dosha ? 'yes' : 'no' %>">
+              <%= match.girl_mangal_dosha_details?.has_dosha ? 'Present' : 'Not Present' %>
+            </span>
+          </div>
+        </div>
+        <div class="pj-field">
+          <div class="pj-label">Groom</div>
+          <div class="pj-value">
+            <span class="pj-badge pj-badge-<%= match.boy_mangal_dosha_details?.has_dosha ? 'yes' : 'no' %>">
+              <%= match.boy_mangal_dosha_details?.has_dosha ? 'Present' : 'Not Present' %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <details class="details-toggle">
+      <summary>View full raw data</summary>
+      <div id="pretty-root"></div>
+    </details>
+    <script type="application/json" id="result-data"><%- JSON.stringify(match).replace(/</g, '\u003c') %></script>
+    <script>
+      renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+    </script>
   <% } %>
 </section>

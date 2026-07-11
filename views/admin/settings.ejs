@@ -1,0 +1,16 @@
+<section class="page-header"><div class="container"><h1>Admin Settings</h1></div></section>
+<section class="container">
+  <div class="auth-card" style="margin:0 0 30px;">
+    <h3>Change Password</h3>
+    <% if (success) { %><p class="form-notice"><%= success %></p><% } %>
+    <% if (errors && errors.length) { %>
+      <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
+    <% } %>
+    <form method="POST" action="/admin/settings/password">
+      <label>Current Password<input type="password" name="currentPassword" required></label>
+      <label>New Password<input type="password" name="newPassword" minlength="6" required></label>
+      <label>Confirm New Password<input type="password" name="confirmPassword" minlength="6" required></label>
+      <button type="submit" class="btn btn-primary btn-full">Update Password</button>
+    </form>
+  </div>
+</section>

@@ -2,8 +2,24 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
-  <% } else { %>
-    <pre class="raw-json"><%= JSON.stringify(result, null, 2) %></pre>
+  <% } else {
+    var predictions = (result && result.daily_love_predictions) || [];
+    var first = predictions[0];
+  %>
+    <% if (first) { %>
+      <div class="result-hero">
+        <div class="result-stat"><span><%= first.sign_combination || (signOne + ' & ' + signTwo) %></span><p>Combination</p></div>
+      </div>
+      <div class="result-section">
+        <p style="font-size:1.05rem;"><%= first.prediction %></p>
+      </div>
+    <% } else { %>
+      <div class="result-section" id="pretty-root"></div>
+      <script type="application/json" id="result-data"><%- JSON.stringify(result).replace(/</g, '\u003c') %></script>
+      <script>
+        renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+      </script>
+    <% } %>
   <% } %>
   <a href="/horoscope/love" class="btn btn-outline">Try another pair</a>
 </section>

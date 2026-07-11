@@ -2,8 +2,79 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
-  <% } else { %>
-    <pre class="raw-json"><%= JSON.stringify(kundli, null, 2) %></pre>
-    <p class="hint">A designed chart view is coming in Phase 2 — this raw view confirms the API integration is live.</p>
+  <% } else {
+    var nd = kundli.nakshatra_details || {};
+    var md = kundli.mangal_dosha || {};
+    var yogas = kundli.yoga_details || [];
+    var dashas = kundli.dasha_periods || [];
+  %>
+    <div class="result-hero">
+      <div class="result-stat"><span><%= nd.nakshatra?.name || '—' %></span><p>Nakshatra</p></div>
+      <div class="result-stat"><span><%= nd.chandra_rasi?.name || '—' %></span><p>Moon Sign (Rasi)</p></div>
+      <div class="result-stat"><span><%= nd.zodiac?.name || nd.soorya_rasi?.name || '—' %></span><p>Sun Sign</p></div>
+    </div>
+
+    <% if (nd.additional_info) { var ai = nd.additional_info; %>
+      <div class="result-section">
+        <h3>Birth Details</h3>
+        <div class="pj-grid">
+          <% [['Deity', ai.deity], ['Ganam', ai.ganam], ['Symbol', ai.symbol], ['Animal Sign', ai.animal_sign],
+              ['Nadi', ai.nadi], ['Color', ai.color], ['Best Direction', ai.best_direction], ['Birth Stone', ai.birth_stone] ]
+              .forEach(function(pair) { if (pair[1]) { %>
+            <div class="pj-field"><div class="pj-label"><%= pair[0] %></div><div class="pj-value"><%= pair[1] %></div></div>
+          <% } }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="result-section">
+      <h3>Mangal Dosha</h3>
+      <p>
+        <span class="pj-badge pj-badge-<%= md.has_dosha ? 'yes' : 'no' %>"><%= md.has_dosha ? 'Present' : 'Not Present' %></span>
+        <% if (md.type) { %> &middot; Type: <%= md.type %><% } %>
+      </p>
+      <% if (md.description) { %><p><%= md.description %></p><% } %>
+      <% if (md.remedies && md.remedies.length) { %>
+        <h4>Remedies</h4>
+        <ul>
+          <% md.remedies.forEach(function(r) { %><li><%= typeof r === 'string' ? r : (r.description || JSON.stringify(r)) %></li><% }) %>
+        </ul>
+      <% } %>
+    </div>
+
+    <% if (yogas.length) { %>
+      <div class="result-section">
+        <h3>Yoga Details</h3>
+        <% yogas.forEach(function(y) { %>
+          <div class="pj-field" style="margin-bottom:10px;">
+            <div class="pj-label"><%= y.name %></div>
+            <div class="pj-value"><%= y.description %></div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (dashas.length) { %>
+      <div class="result-section">
+        <h3>Vimshottari Dasha Periods</h3>
+        <table class="data-table">
+          <thead><tr><th>Period</th><th>Start</th><th>End</th></tr></thead>
+          <tbody>
+            <% dashas.forEach(function(d) { %>
+              <tr><td><%= d.name %></td><td><%= new Date(d.start).toDateString() %></td><td><%= new Date(d.end).toDateString() %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <details class="details-toggle">
+      <summary>View full raw data</summary>
+      <div id="pretty-root"></div>
+    </details>
+    <script type="application/json" id="result-data"><%- JSON.stringify(kundli).replace(/</g, '\u003c') %></script>
+    <script>
+      renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
+    </script>
   <% } %>
 </section>
