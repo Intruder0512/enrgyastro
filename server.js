@@ -12,6 +12,20 @@ const connectDB = require('./config/db');
 const seed = require('./utils/seedData');
 const { attachUser } = require('./middleware/auth');
 
+// Fail fast with a clear message rather than letting a missing env var
+// surface as a cryptic assertion from a dependency deep in the stack
+// (e.g. connect-mongo crashing with "You must provide either mongoUrl...").
+const REQUIRED_ENV = ['MONGO_URI', 'SESSION_SECRET', 'ADMIN_EMAIL', 'ADMIN_PASSWORD'];
+const missing = REQUIRED_ENV.filter((key) => !process.env[key]);
+if (missing.length) {
+  console.error(
+    `Missing required environment variable(s): ${missing.join(', ')}.\n` +
+    'Set these in your hosting provider\'s environment/dashboard (or in .env locally) before starting the app. ' +
+    'See .env.example for the full list.'
+  );
+  process.exit(1);
+}
+
 const app = express();
 
 connectDB().then(seed).catch((err) => console.error('Seed error:', err.message));
@@ -67,6 +81,10 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).render('error', { title: 'Server Error', message: 'Something went wrong. Please try again.' });
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
 });
 
 const PORT = process.env.PORT || 3000;
