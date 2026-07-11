@@ -1,0 +1,55 @@
+<section class="page-header"><div class="container"><h1>All Astrology Tools</h1><p>Fill in any calculator for free — create a free account to view your result.</p></div></section>
+<section class="container">
+  <div class="service-grid">
+    <div class="service-card">
+      <span class="service-tag">kundli</span>
+      <h3>Free Kundli</h3>
+      <p>Your complete Vedic birth chart.</p>
+      <a href="/dashboard/kundli" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">matching</span>
+      <h3>Kundli Matching</h3>
+      <p>36-point Guna Milan compatibility.</p>
+      <a href="/dashboard/matching" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">dosha</span>
+      <h3>Dosha Check</h3>
+      <p>Mangal, Kaal Sarp &amp; Sade Sati.</p>
+      <a href="/dashboard/dosha" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">chart</span>
+      <h3>Birth Chart</h3>
+      <p>Visual North/South Indian style chart.</p>
+      <a href="/dashboard/chart" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">numerology</span>
+      <h3>Numerology</h3>
+      <p>Life Path &amp; Destiny Number.</p>
+      <a href="/dashboard/numerology" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">horoscope</span>
+      <h3>Daily Horoscope</h3>
+      <p>Today's reading for your sign.</p>
+      <a href="/horoscope" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <div class="service-card">
+      <span class="service-tag">horoscope</span>
+      <h3>Daily Love Horoscope</h3>
+      <p>Compatibility for two signs, today.</p>
+      <a href="/horoscope/love" class="btn btn-small btn-primary">Open</a>
+    </div>
+    <% Object.keys(tools).forEach(function(key) { var t = tools[key]; %>
+      <div class="service-card">
+        <span class="service-tag">vedic</span>
+        <h3><%= t.label %></h3>
+        <p><%= t.description %></p>
+        <a href="/dashboard/tool/<%= key %>" class="btn btn-small btn-primary">Open</a>
+      </div>
+    <% }) %>
+  </div>
+</section>

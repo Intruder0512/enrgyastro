@@ -3,6 +3,7 @@ const router = express.Router();
 const Service = require('../models/Service');
 const panchangController = require('../controllers/panchangController');
 const extraAstroController = require('../controllers/extraAstroController');
+const vedicToolsController = require('../controllers/vedicToolsController');
 const asyncHandler = require('../utils/asyncHandler');
 
 router.get('/', asyncHandler(async (req, res) => {
@@ -20,6 +21,8 @@ router.get('/panchang/widget', asyncHandler(panchangController.getTodayPanchang)
 
 router.get('/horoscope', asyncHandler(extraAstroController.getHoroscope));
 router.get('/horoscope/love', asyncHandler(extraAstroController.getLoveHoroscope));
+
+router.get('/tools', vedicToolsController.showToolsIndex);
 
 router.get('/about', (req, res) => res.render('about', { title: 'About' }));
 router.get('/contact', (req, res) => res.render('contact', { title: 'Contact Us' }));

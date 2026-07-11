@@ -7,7 +7,7 @@ const reportSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     type: {
       type: String,
-      enum: ['kundli', 'panchang', 'matching', 'dosha', 'dasha', 'numerology', 'chart'],
+      enum: ['kundli', 'panchang', 'matching', 'dosha', 'dasha', 'numerology', 'chart', 'tool'],
       required: true
     },
     inputHash: { type: String, required: true, index: true }, // hash of request params, for cache lookups

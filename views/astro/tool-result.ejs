@@ -1,0 +1,10 @@
+<section class="page-header"><div class="container"><h1><%= tool.label %></h1></div></section>
+<section class="container prose-page">
+  <% if (error) { %>
+    <p class="widget-error"><%= error %></p>
+  <% } else if (tool.isSvg) { %>
+    <div class="chart-svg-wrap"><%- result.svg %></div>
+  <% } else { %>
+    <pre class="raw-json"><%= JSON.stringify(result.data, null, 2) %></pre>
+  <% } %>
+</section>

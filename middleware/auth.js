@@ -19,4 +19,18 @@ function attachUser(req, res, next) {
   next();
 }
 
-module.exports = { requireAuth, requireAdmin, attachUser };
+// Anyone can view/fill a calculator form. Submitting it (to actually
+// generate a result) requires an account — this stashes the submitted
+// data in the session and sends them to register/login first, then
+// replays the request once they're authenticated (see utils/pendingDispatch.js).
+function gateResult(key) {
+  return (req, res, next) => {
+    if (req.session && req.session.userId) return next();
+    const resolvedKey = typeof key === 'function' ? key(req) : key;
+    req.session.pendingSubmission = { handlerKey: resolvedKey, body: req.body, params: req.params };
+    req.session.authNotice = 'Create a free account (or log in) to view your result — it only takes a few seconds.';
+    return res.redirect('/register');
+  };
+}
+
+module.exports = { requireAuth, requireAdmin, attachUser, gateResult };

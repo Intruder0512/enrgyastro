@@ -1,6 +1,7 @@
 <section class="auth-page">
   <div class="auth-card">
     <h1>Login</h1>
+    <% if (notice) { %><p class="form-notice"><%= notice %></p><% } %>
     <% if (errors && errors.length) { %>
       <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
     <% } %>

@@ -119,7 +119,14 @@ const prokerala = {
       first_name: firstName,
       middle_name: middleName || '',
       last_name: lastName || ''
-    })
+    }),
+
+  // ---- Generic caller used by the vedicTools registry (utils/vedicTools.js) ----
+  callGeneric: (path, lat, lng, datetime, la = 'en') =>
+    callProkerala(path, { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
+
+  callGenericSvg: (path, lat, lng, datetime, la = 'en') =>
+    callProkeralaRaw(path, { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la, format: 'svg' })
 };
 
 module.exports = prokerala;
