@@ -11,6 +11,7 @@ const expressLayouts = require('express-ejs-layouts');
 const connectDB = require('./config/db');
 const seed = require('./utils/seedData');
 const { attachUser } = require('./middleware/auth');
+const { toolIcons, serviceIcons } = require('./utils/icons');
 
 // Fail fast with a clear message rather than letting a missing env var
 // surface as a cryptic assertion from a dependency deep in the stack
@@ -27,6 +28,13 @@ if (missing.length) {
 }
 
 const app = express();
+
+// Hostinger (and most Node hosts) sit behind a reverse proxy that terminates
+// SSL and forwards plain HTTP internally. Without trust proxy, Express never
+// sees the connection as secure, so express-session silently refuses to set
+// cookie.secure=true cookies — sessions never persist, and login/register
+// appear to "do nothing" even though the account is created successfully.
+app.set('trust proxy', 1);
 
 connectDB().then(seed).catch((err) => console.error('Seed error:', err.message));
 
@@ -65,6 +73,8 @@ app.use(attachUser);
 // Cache-busting version string for CSS/JS, available in all views as `assetV`
 app.use((req, res, next) => {
   res.locals.assetV = process.env.ASSET_VERSION || '20260711a';
+  res.locals.toolIcons = toolIcons;
+  res.locals.serviceIcons = serviceIcons;
   next();
 });
 

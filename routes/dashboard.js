@@ -6,6 +6,7 @@ const astroController = require('../controllers/astroController');
 const extraAstroController = require('../controllers/extraAstroController');
 const doshaChartController = require('../controllers/doshaChartController');
 const vedicToolsController = require('../controllers/vedicToolsController');
+const pdfReportController = require('../controllers/pdfReportController');
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 
@@ -34,6 +35,9 @@ router.post(
   gateResult((req) => 'tool:' + req.params.type),
   asyncHandler(vedicToolsController.submitForm)
 );
+
+router.get('/pdf-report', pdfReportController.showForm);
+router.post('/pdf-report', gateResult('pdf-report'), asyncHandler(pdfReportController.generate));
 
 // ---- Hard-gated: personal account area ----
 

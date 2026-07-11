@@ -2,6 +2,7 @@ const astroController = require('../controllers/astroController');
 const extraAstroController = require('../controllers/extraAstroController');
 const doshaChartController = require('../controllers/doshaChartController');
 const vedicToolsController = require('../controllers/vedicToolsController');
+const pdfReportController = require('../controllers/pdfReportController');
 
 // Named calculators that have their own dedicated form/result views
 const NAMED_HANDLERS = {
@@ -9,7 +10,8 @@ const NAMED_HANDLERS = {
   matching: astroController.generateMatching,
   numerology: extraAstroController.calculateNumerology,
   dosha: doshaChartController.checkDosha,
-  chart: doshaChartController.generateChart
+  chart: doshaChartController.generateChart,
+  'pdf-report': pdfReportController.generate
 };
 
 // Called right after a session is established (register or login). If the

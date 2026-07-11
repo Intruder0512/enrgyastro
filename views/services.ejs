@@ -5,6 +5,7 @@
   <div class="service-grid">
     <% services.forEach(function(s) { %>
       <div class="service-card">
+        <div class="icon-tile icon-tile-gold"><%= serviceIcons[s.category] || '🔮' %></div>
         <span class="service-tag"><%= s.category %></span>
         <h3><%= s.name %></h3>
         <p><%= s.description %></p>

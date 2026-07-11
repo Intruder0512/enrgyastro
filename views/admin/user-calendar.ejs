@@ -1,9 +1,9 @@
-<section class="page-header"><div class="container"><h1>My Appointments</h1></div></section>
+<section class="page-header"><div class="container"><h1><%= viewedUser.name %>'s Bookings</h1><p><%= viewedUser.email %> &middot; <%= viewedUser.phone %></p></div></section>
 <section class="container">
   <%- include('../partials/appointments-calendar', { appointments: appointments }) %>
 
   <% if (!appointments.length) { %>
-    <p>No appointments yet. <a href="/booking">Book one now</a>.</p>
+    <p>This user has no appointments yet.</p>
   <% } else { %>
     <table class="data-table">
       <thead><tr><th>Service</th><th>Date</th><th>Slot</th><th>Mode</th><th>Status</th></tr></thead>
@@ -20,4 +20,5 @@
       </tbody>
     </table>
   <% } %>
+  <a href="/admin/users" class="btn btn-outline">Back to All Users</a>
 </section>

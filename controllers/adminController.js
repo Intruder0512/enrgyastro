@@ -42,6 +42,30 @@ exports.updateAppointmentStatus = async (req, res) => {
   res.redirect('/admin/appointments');
 };
 
+exports.listUsers = async (req, res) => {
+  const users = await User.find({ role: 'user' }).sort('-createdAt');
+
+  const appointmentCounts = await Appointment.aggregate([
+    { $group: { _id: '$user', count: { $sum: 1 } } }
+  ]);
+  const countMap = new Map(appointmentCounts.map((a) => [String(a._id), a.count]));
+
+  const usersWithCounts = users.map((u) => ({
+    ...u.toObject(),
+    appointmentCount: countMap.get(String(u._id)) || 0
+  }));
+
+  res.render('admin/users', { title: 'Registered Users', users: usersWithCounts });
+};
+
+exports.viewUserCalendar = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(404).render('error', { title: 'Not Found', message: 'User not found.' });
+
+  const appointments = await Appointment.find({ user: user._id }).populate('service').sort('date');
+  res.render('admin/user-calendar', { title: `${user.name}'s Bookings`, viewedUser: user, appointments });
+};
+
 exports.listServices = async (req, res) => {
   const services = await Service.find().sort('category name');
   res.render('admin/services', { title: 'Manage Services', services });

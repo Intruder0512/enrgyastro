@@ -1,0 +1,105 @@
+<div class="calendar-widget">
+  <div class="calendar-header">
+    <button type="button" id="cal-prev" class="btn btn-small btn-outline">&larr; Prev</button>
+    <h3 id="cal-month-label"></h3>
+    <button type="button" id="cal-next" class="btn btn-small btn-outline">Next &rarr;</button>
+  </div>
+  <div class="calendar-grid" id="cal-grid"></div>
+  <div id="cal-day-detail" class="calendar-day-detail" style="display:none;"></div>
+</div>
+
+<script type="application/json" id="appt-data"><%- JSON.stringify(appointments).replace(/</g, '\u003c') %></script>
+<script>
+(function () {
+  var raw = JSON.parse(document.getElementById('appt-data').textContent || '[]');
+  var appts = raw.map(function (a) {
+    return {
+      dateStr: a.date.slice(0, 10),
+      service: a.service && a.service.name,
+      slot: a.slot,
+      status: a.status,
+      mode: a.mode
+    };
+  });
+
+  var byDate = {};
+  appts.forEach(function (a) {
+    (byDate[a.dateStr] = byDate[a.dateStr] || []).push(a);
+  });
+
+  var today = new Date();
+  var viewYear = today.getFullYear();
+  var viewMonth = today.getMonth();
+
+  var monthLabel = document.getElementById('cal-month-label');
+  var grid = document.getElementById('cal-grid');
+  var detail = document.getElementById('cal-day-detail');
+  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function render() {
+    monthLabel.textContent = monthNames[viewMonth] + ' ' + viewYear;
+    grid.innerHTML = '';
+    detail.style.display = 'none';
+
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function (d) {
+      var el = document.createElement('div');
+      el.className = 'cal-dow';
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+
+    var firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (var i = 0; i < firstDay; i++) {
+      var blank = document.createElement('div');
+      blank.className = 'cal-cell cal-cell-empty';
+      grid.appendChild(blank);
+    }
+
+    for (var day = 1; day <= daysInMonth; day++) {
+      var dateStr = viewYear + '-' + pad(viewMonth + 1) + '-' + pad(day);
+      var cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      var dayAppts = byDate[dateStr] || [];
+      if (dayAppts.length) cell.classList.add('cal-cell-has-appt');
+
+      var num = document.createElement('span');
+      num.className = 'cal-cell-num';
+      num.textContent = day;
+      cell.appendChild(num);
+
+      if (dayAppts.length) {
+        var dot = document.createElement('span');
+        dot.className = 'cal-cell-dot';
+        dot.textContent = dayAppts.length;
+        cell.appendChild(dot);
+        cell.addEventListener('click', (function (list, label) {
+          return function () {
+            detail.style.display = 'block';
+            detail.innerHTML = '<h4>' + label + '</h4>' + list.map(function (a) {
+              return '<div class="cal-detail-row"><strong>' + (a.service || 'Consultation') + '</strong> — ' +
+                a.slot + ' &middot; ' + a.mode + ' &middot; <span class="status status-' + a.status + '">' + a.status + '</span></div>';
+            }).join('');
+          };
+        })(dayAppts, monthNames[viewMonth] + ' ' + day + ', ' + viewYear));
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  document.getElementById('cal-prev').addEventListener('click', function () {
+    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    render();
+  });
+  document.getElementById('cal-next').addEventListener('click', function () {
+    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    render();
+  });
+
+  render();
+})();
+</script>

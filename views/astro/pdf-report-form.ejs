@@ -1,0 +1,21 @@
+<section class="page-header"><div class="container"><h1>PDF Astrology Report</h1><p>A downloadable personal report combining your birth chart, planet positions, doshas, yogas, and Dasha periods.</p></div></section>
+<section class="container">
+  <% if (typeof error !== 'undefined' && error) { %><p class="widget-error"><%= error %></p><% } %>
+  <form method="POST" action="/dashboard/pdf-report" class="booking-form">
+    <label>First Name<input type="text" name="firstName" required></label>
+    <label>Middle Name (optional)<input type="text" name="middleName"></label>
+    <label>Last Name<input type="text" name="lastName" required></label>
+    <label>Gender
+      <select name="gender" required>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </label>
+    <label>Date of Birth<input type="date" name="dob" required></label>
+    <label>Time of Birth<input type="time" name="tob" required></label>
+    <label>Place of Birth<input type="text" name="place" placeholder="City, State"></label>
+    <label>Latitude<input type="number" step="any" name="lat" placeholder="e.g. 28.6139" required></label>
+    <label>Longitude<input type="number" step="any" name="lng" placeholder="e.g. 77.2090" required></label>
+    <button type="submit" class="btn btn-primary btn-full">Generate PDF Report</button>
+  </form>
+</section>

@@ -11,6 +11,9 @@ router.get('/', asyncHandler(adminController.dashboard));
 router.get('/appointments', asyncHandler(adminController.listAppointments));
 router.post('/appointments/:id/status', asyncHandler(adminController.updateAppointmentStatus));
 
+router.get('/users', asyncHandler(adminController.listUsers));
+router.get('/users/:id/calendar', asyncHandler(adminController.viewUserCalendar));
+
 router.get('/services', asyncHandler(adminController.listServices));
 router.post('/services/:id/toggle', asyncHandler(adminController.toggleService));
 

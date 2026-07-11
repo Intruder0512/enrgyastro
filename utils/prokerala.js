@@ -1,4 +1,5 @@
 const axios = require('axios');
+const qs = require('qs');
 
 // Prokerala uses OAuth2 client-credentials: exchange client id/secret for a
 // short-lived bearer token, then call the v2 endpoints with it. Token is
@@ -126,7 +127,22 @@ const prokerala = {
     callProkerala(path, { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la }),
 
   callGenericSvg: (path, lat, lng, datetime, la = 'en') =>
-    callProkeralaRaw(path, { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la, format: 'svg' })
+    callProkeralaRaw(path, { ayanamsa: 1, coordinates: formatCoordinates(lat, lng), datetime, la, format: 'svg' }),
+
+  // ---- PDF Report ----
+  // Returns raw PDF bytes. Prokerala's report endpoint takes deeply nested
+  // input/options objects, encoded the same way PHP's http_build_query
+  // would (bracket notation) — qs's default 'indices' array format matches
+  // that, which axios's built-in params serializer does not.
+  getPersonalPdfReport: async (input, options) => {
+    const token = await getAccessToken();
+    const query = qs.stringify({ input, options });
+    const { data } = await axios.get(
+      `${process.env.PROKERALA_BASE_URL}/report/personal-reading/instant?${query}`,
+      { headers: { Authorization: `Bearer ${token}` }, responseType: 'arraybuffer' }
+    );
+    return data;
+  }
 };
 
 module.exports = prokerala;

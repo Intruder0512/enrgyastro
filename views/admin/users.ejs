@@ -1,0 +1,22 @@
+<section class="page-header"><div class="container"><h1>Registered Users</h1></div></section>
+<section class="container">
+  <% if (!users.length) { %>
+    <p>No registered users yet.</p>
+  <% } else { %>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th><th>Bookings</th><th></th></tr></thead>
+      <tbody>
+        <% users.forEach(function(u) { %>
+          <tr>
+            <td><%= u.name %></td>
+            <td><%= u.email %></td>
+            <td><%= u.phone %></td>
+            <td><%= new Date(u.createdAt).toDateString() %></td>
+            <td><%= u.appointmentCount %></td>
+            <td><a href="/admin/users/<%= u._id %>/calendar" class="btn btn-small btn-outline">View Calendar</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>

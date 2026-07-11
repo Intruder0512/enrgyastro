@@ -32,7 +32,20 @@ exports.register = async (req, res) => {
     });
   }
 
-  const user = await User.create({ name, email, phone, password });
+  let user;
+  try {
+    user = await User.create({ name, email, phone, password });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).render('auth/register', {
+        title: 'Create Account',
+        errors: [{ msg: 'An account with this email already exists.' }],
+        old: req.body,
+        notice: null
+      });
+    }
+    throw err;
+  }
 
   req.session.userId = user._id;
   req.session.name = user.name;
