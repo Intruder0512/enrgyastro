@@ -2,16 +2,57 @@
 <section class="container prose-page">
   <% if (error) { %>
     <p class="widget-error"><%= error %></p>
-  <% } else if (horoscope && horoscope.daily_prediction) { %>
-    <div class="result-hero">
-      <div class="result-stat"><span><%= horoscope.daily_prediction.sign_name %></span><p><%= horoscope.daily_prediction.date %></p></div>
-    </div>
-    <div class="result-section">
-      <p style="font-size:1.05rem;"><%= horoscope.daily_prediction.prediction %></p>
-    </div>
-  <% } else if (horoscope && horoscope.daily_predictions) { %>
-    <div class="result-section" id="pretty-root"></div>
-    <script type="application/json" id="result-data"><%- JSON.stringify(horoscope.daily_predictions).replace(/</g, '\u003c') %></script>
+  <% } else if (horoscope) {
+    var predictions = horoscope.predictions || [];
+    var transits = horoscope.transits || [];
+    var aspects = horoscope.aspects || [];
+  %>
+    <% if (horoscope.sign) { %>
+      <div class="result-hero">
+        <div class="result-stat"><span><%= horoscope.sign.name %></span><p>Sign</p></div>
+      </div>
+    <% } %>
+
+    <% if (predictions.length) { %>
+      <% predictions.forEach(function(p) { %>
+        <div class="result-section">
+          <h3><%= p.type ? (p.type.charAt(0).toUpperCase() + p.type.slice(1)) : 'Prediction' %></h3>
+          <p style="font-size:1.05rem;"><%= p.prediction %></p>
+          <div class="pj-grid">
+            <% if (p.seek) { %><div class="pj-field"><div class="pj-label">Seek</div><div class="pj-value"><%= p.seek %></div></div><% } %>
+            <% if (p.challenge) { %><div class="pj-field"><div class="pj-label">Challenge</div><div class="pj-value"><%= p.challenge %></div></div><% } %>
+            <% if (p.insight) { %><div class="pj-field"><div class="pj-label">Insight</div><div class="pj-value"><%= p.insight %></div></div><% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="widget-error">No prediction text was returned for this sign/type. Try a different type, or view the raw data below.</p>
+    <% } %>
+
+    <% if (transits.length) { %>
+      <div class="result-section">
+        <h3>Current Transits</h3>
+        <table class="data-table">
+          <thead><tr><th>Planet</th><th>Sign</th><th>House</th><th>Retrograde</th></tr></thead>
+          <tbody>
+            <% transits.forEach(function(t) { %>
+              <tr>
+                <td><%= t.name %></td>
+                <td><%= t.zodiac?.name || '—' %></td>
+                <td><%= t.house_number %></td>
+                <td><span class="pj-badge pj-badge-<%= t.is_retrograde ? 'yes' : 'no' %>"><%= t.is_retrograde ? 'Yes' : 'No' %></span></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <details class="details-toggle">
+      <summary>View full raw data</summary>
+      <div id="pretty-root"></div>
+    </details>
+    <script type="application/json" id="result-data"><%- JSON.stringify(horoscope).replace(/</g, '\u003c') %></script>
     <script>
       renderPrettyJson(document.getElementById('pretty-root'), JSON.parse(document.getElementById('result-data').textContent));
     </script>

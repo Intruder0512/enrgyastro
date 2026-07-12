@@ -53,7 +53,7 @@ exports.submitForm = async (req, res) => {
 
     res.render('astro/tool-result', { title: tool.label, tool, result, error: null });
   } catch (err) {
-    console.error(`Vedic tool (${type}) error:`, err.message);
+    console.error(`Vedic tool (${type}) error:`, err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/tool-result', { title: tool.label, tool, result: null, error: 'Could not generate this report right now. Please try again shortly.' });
   }
 };

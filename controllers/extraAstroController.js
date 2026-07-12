@@ -57,7 +57,7 @@ exports.calculateNumerology = async (req, res) => {
 
     res.render('astro/numerology-result', { title: 'Your Numerology Report', lifePath, destiny, error: null });
   } catch (err) {
-    console.error('Numerology error:', err.message);
+    console.error('Numerology error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/numerology-result', {
       title: 'Your Numerology Report',
       lifePath: null,
@@ -73,15 +73,14 @@ exports.showHoroscopeForm = (req, res) =>
   res.render('astro/horoscope-form', { title: 'Daily Horoscope', signs: ZODIAC_SIGNS });
 
 exports.getHoroscope = async (req, res) => {
-  const { sign, type } = req.query;
+  const { sign } = req.query;
+  const type = req.query.type || 'general';
   if (!sign) return res.render('astro/horoscope-form', { title: 'Daily Horoscope', signs: ZODIAC_SIGNS });
 
   const datetime = nowISTIso();
 
   try {
-    const data = type
-      ? await prokerala.getDailyHoroscopeAdvanced(sign, type, datetime)
-      : await prokerala.getDailyHoroscope(sign, datetime);
+    const data = await prokerala.getDailyHoroscopeAdvanced(sign, type, datetime);
 
     res.render('astro/horoscope-result', {
       title: `Daily Horoscope — ${sign}`,
@@ -91,7 +90,7 @@ exports.getHoroscope = async (req, res) => {
       error: null
     });
   } catch (err) {
-    console.error('Daily horoscope error:', err.message);
+    console.error('Daily horoscope error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/horoscope-result', {
       title: 'Daily Horoscope',
       signs: ZODIAC_SIGNS,
@@ -126,7 +125,7 @@ exports.getLoveHoroscope = async (req, res) => {
       error: null
     });
   } catch (err) {
-    console.error('Love horoscope error:', err.message);
+    console.error('Love horoscope error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/love-horoscope-result', {
       title: 'Daily Love Horoscope',
       signs: ZODIAC_SIGNS,

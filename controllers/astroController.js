@@ -30,7 +30,7 @@ exports.generateKundli = async (req, res) => {
 
     res.render('astro/kundli-result', { title: 'Your Kundli', kundli: data.data, error: null });
   } catch (err) {
-    console.error('Kundli generation error:', err.message);
+    console.error('Kundli generation error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/kundli-result', {
       title: 'Your Kundli',
       kundli: null,
@@ -64,7 +64,7 @@ exports.generateMatching = async (req, res) => {
 
     res.render('astro/matching-result', { title: 'Match Result', match: data.data, error: null });
   } catch (err) {
-    console.error('Matching generation error:', err.message);
+    console.error('Matching generation error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/matching-result', {
       title: 'Match Result',
       match: null,

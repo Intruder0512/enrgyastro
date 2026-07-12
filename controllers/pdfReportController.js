@@ -50,7 +50,7 @@ exports.generate = async (req, res) => {
     });
     return res.send(Buffer.from(pdfBuffer));
   } catch (err) {
-    console.error('PDF report error:', err.message);
+    console.error('PDF report error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     return res.render('astro/pdf-report-form', {
       title: 'PDF Astrology Report',
       error: 'Could not generate the report right now. Please try again shortly.'

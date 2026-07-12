@@ -45,7 +45,7 @@ exports.checkDosha = async (req, res) => {
 
     res.render('astro/dosha-result', { title: 'Dosha Report', result, error: null });
   } catch (err) {
-    console.error('Dosha check error:', err.message);
+    console.error('Dosha check error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/dosha-result', {
       title: 'Dosha Report',
       result: null,
@@ -66,7 +66,7 @@ exports.generateChart = async (req, res) => {
     const svg = await prokerala.getChartSvg(lat, lng, datetime, chartType || 'rasi', chartStyle || 'south-indian');
     res.render('astro/chart-result', { title: 'Your Birth Chart', svg, error: null });
   } catch (err) {
-    console.error('Chart generation error:', err.message);
+    console.error('Chart generation error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     res.render('astro/chart-result', {
       title: 'Your Birth Chart',
       svg: null,

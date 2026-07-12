@@ -47,7 +47,7 @@ exports.getTodayPanchang = async (req, res) => {
     }
     return res.render('panchang', { title: "Today's Panchang", panchang: data.data, error: null });
   } catch (err) {
-    console.error('Panchang fetch error:', err.message);
+    console.error('Panchang fetch error:', err.response?.data ? JSON.stringify(err.response.data) : err.message);
     const errMsg = 'Panchang data is temporarily unavailable. Please check back shortly.';
     if (req.query.widget) {
       return res.render('partials/panchang-widget', { panchang: null, error: errMsg, layout: false });
