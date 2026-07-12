@@ -74,13 +74,12 @@ exports.showHoroscopeForm = (req, res) =>
 
 exports.getHoroscope = async (req, res) => {
   const { sign } = req.query;
-  const type = req.query.type || 'general';
   if (!sign) return res.render('astro/horoscope-form', { title: 'Daily Horoscope', signs: ZODIAC_SIGNS });
 
   const datetime = nowISTIso();
 
   try {
-    const data = await prokerala.getDailyHoroscopeAdvanced(sign, type, datetime);
+    const data = await prokerala.getDailyHoroscope(sign, datetime);
 
     res.render('astro/horoscope-result', {
       title: `Daily Horoscope — ${sign}`,
