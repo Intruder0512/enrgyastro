@@ -72,7 +72,7 @@ app.use(attachUser);
 
 // Cache-busting version string for CSS/JS, available in all views as `assetV`
 app.use((req, res, next) => {
-  res.locals.assetV = process.env.ASSET_VERSION || '20260711a';
+  res.locals.assetV = process.env.ASSET_VERSION || '20260713a';
   res.locals.toolIcons = toolIcons;
   res.locals.serviceIcons = serviceIcons;
   next();
