@@ -1,0 +1,31 @@
+<section class="page-header"><div class="container"><h1>Blog</h1><p>Astrology insights, guides, and updates.</p></div></section>
+<section class="container">
+  <% if (!posts.length) { %>
+    <p>No posts published yet — check back soon.</p>
+  <% } else { %>
+    <div class="service-grid">
+      <% posts.forEach(function(p) { %>
+        <a class="service-card" href="/blog/<%= p.slug %>" style="padding:0;overflow:hidden;">
+          <% if (p.coverImage) { %>
+            <img src="<%= p.coverImage %>" alt="<%= p.title %>" style="width:100%;height:180px;object-fit:cover;display:block;">
+          <% } else if (p.videoUrl || p.videoFile) { %>
+            <div style="width:100%;height:180px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🎬</div>
+          <% } %>
+          <div style="padding:20px;">
+            <span class="service-tag"><%= new Date(p.publishedAt || p.createdAt).toDateString() %></span>
+            <h3><%= p.title %></h3>
+            <% if (p.excerpt) { %><p><%= p.excerpt %></p><% } %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+      <div class="center-cta" style="display:flex;gap:10px;justify-content:center;">
+        <% for (var i = 1; i <= totalPages; i++) { %>
+          <a href="/blog?page=<%= i %>" class="btn btn-small <%= i === page ? 'btn-primary' : 'btn-outline' %>"><%= i %></a>
+        <% } %>
+      </div>
+    <% } %>
+  <% } %>
+</section>

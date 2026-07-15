@@ -339,6 +339,16 @@ legend { font-weight: 800; color: var(--primary-dark); padding: 0 8px; }
 .chart-svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; max-width: 520px; box-shadow: var(--shadow-sm); }
 .chart-svg-wrap svg { width: 100%; height: auto; }
 
+/* Blog content (rendered rich text) */
+.blog-content { font-size: 1.02rem; line-height: 1.75; }
+.blog-content h2 { margin-top: 32px; font-size: 1.4rem; }
+.blog-content h3 { margin-top: 24px; font-size: 1.15rem; }
+.blog-content p { margin: 0 0 16px; }
+.blog-content img { max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; box-shadow: var(--shadow-sm); }
+.blog-content blockquote { border-left: 4px solid var(--primary); margin: 16px 0; padding: 6px 20px; color: var(--muted); font-style: italic; background: #faf6fc; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.blog-content ul, .blog-content ol { padding-left: 22px; margin: 0 0 16px; }
+.blog-content a { text-decoration: underline; }
+
 /* Misc */
 .raw-json { background: #241c2c; color: #f5f2f9; padding: 22px; border-radius: var(--radius); overflow-x: auto; font-size: 0.82rem; box-shadow: var(--shadow-md); }
 .hint { color: var(--muted); font-size: 0.85rem; }

@@ -2,7 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const adminController = require('../controllers/adminController');
+const adminBlogController = require('../controllers/adminBlogController');
 const asyncHandler = require('../utils/asyncHandler');
+const upload = require('../utils/upload');
+
+const blogUpload = upload.fields([{ name: 'coverImage', maxCount: 1 }, { name: 'videoFile', maxCount: 1 }]);
 
 router.use(requireAuth, requireAdmin);
 
@@ -27,5 +31,13 @@ router.post('/settings/password', asyncHandler(adminController.updatePassword));
 router.post('/settings/slots', asyncHandler(adminController.updateSlots));
 router.post('/settings/blocked-dates', asyncHandler(adminController.addBlockedDate));
 router.post('/settings/blocked-dates/:blockedId/delete', asyncHandler(adminController.removeBlockedDate));
+
+router.get('/blog', asyncHandler(adminBlogController.listPosts));
+router.get('/blog/new', adminBlogController.showNewForm);
+router.post('/blog', blogUpload, asyncHandler(adminBlogController.createPost));
+router.get('/blog/:id/edit', asyncHandler(adminBlogController.showEditForm));
+router.post('/blog/:id', blogUpload, asyncHandler(adminBlogController.updatePost));
+router.post('/blog/:id/toggle', asyncHandler(adminBlogController.togglePublish));
+router.post('/blog/:id/delete', asyncHandler(adminBlogController.deletePost));
 
 module.exports = router;

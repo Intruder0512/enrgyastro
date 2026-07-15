@@ -1,0 +1,35 @@
+<section class="page-header">
+  <div class="container">
+    <h1><%= post.title %></h1>
+    <p><%= new Date(post.publishedAt || post.createdAt).toDateString() %></p>
+  </div>
+</section>
+<section class="container prose-page">
+
+  <% if (embedUrl) { %>
+    <div style="position:relative;padding-top:56.25%;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:24px;">
+      <iframe src="<%= embedUrl %>" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+    </div>
+  <% } else if (post.videoFile) { %>
+    <video controls style="width:100%;border-radius:var(--radius);box-shadow:var(--shadow-md);margin-bottom:24px;">
+      <source src="<%= post.videoFile %>">
+    </video>
+  <% } else if (post.coverImage) { %>
+    <img src="<%= post.coverImage %>" alt="<%= post.title %>" style="width:100%;border-radius:var(--radius);box-shadow:var(--shadow-md);margin-bottom:24px;">
+  <% } %>
+
+  <div class="blog-content"><%- post.content %></div>
+
+  <% if (related.length) { %>
+    <div class="result-section" style="margin-top:40px;">
+      <h3>More Posts</h3>
+      <div class="service-grid">
+        <% related.forEach(function(r) { %>
+          <a class="dash-card" href="/blog/<%= r.slug %>"><h4><%= r.title %></h4></a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <a href="/blog" class="btn btn-outline" style="margin-top:20px;">&larr; Back to Blog</a>
+</section>

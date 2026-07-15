@@ -1,0 +1,73 @@
+<section class="page-header"><div class="container"><h1><%= post && post._id ? 'Edit Blog Post' : 'New Blog Post' %></h1></div></section>
+<section class="container">
+  <% if (errors && errors.length) { %>
+    <ul class="form-errors"><% errors.forEach(function(e) { %><li><%= e.msg %></li><% }) %></ul>
+  <% } %>
+
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.6/dist/quill.snow.css" rel="stylesheet">
+
+  <form method="POST" action="<%= post && post._id ? '/admin/blog/' + post._id : '/admin/blog' %>" enctype="multipart/form-data" class="booking-form" style="max-width:720px;">
+    <label>Title<input type="text" name="title" value="<%= post?.title || '' %>" required></label>
+
+    <label>Excerpt (short summary shown on the blog listing)
+      <textarea name="excerpt" rows="2" maxlength="300"><%= post?.excerpt || '' %></textarea>
+    </label>
+
+    <label>Content
+      <div id="editor-container" style="background:#fff;border-radius:10px;"><%- post?.content || '' %></div>
+      <textarea name="content" id="content-input" style="display:none;"></textarea>
+    </label>
+
+    <fieldset>
+      <legend>Cover Image (optional)</legend>
+      <% if (post?.coverImage) { %>
+        <img src="<%= post.coverImage %>" alt="Current cover" style="max-width:220px;border-radius:8px;margin-bottom:10px;display:block;">
+        <p class="hint">Uploading a new image will replace this one.</p>
+      <% } %>
+      <input type="file" name="coverImage" accept="image/*">
+    </fieldset>
+
+    <fieldset>
+      <legend>Video (optional — use either one)</legend>
+      <label>YouTube or Vimeo Link
+        <input type="text" name="videoUrl" value="<%= post?.videoUrl || '' %>" placeholder="https://youtube.com/watch?v=...">
+      </label>
+      <% if (post?.videoFile) { %>
+        <p class="hint">Current uploaded video: <a href="<%= post.videoFile %>" target="_blank">view file</a>. Uploading a new one will replace it.</p>
+      <% } %>
+      <label>Or Upload a Video File (max 60MB)
+        <input type="file" name="videoFile" accept="video/mp4,video/webm,video/quicktime">
+      </label>
+    </fieldset>
+
+    <label>Status
+      <select name="status">
+        <option value="draft" <%= (!post || post.status === 'draft') ? 'selected' : '' %>>Draft</option>
+        <option value="published" <%= post?.status === 'published' ? 'selected' : '' %>>Published</option>
+      </select>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-full"><%= post && post._id ? 'Save Changes' : 'Create Post' %></button>
+  </form>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.6/dist/quill.js"></script>
+<script>
+  var quill = new Quill('#editor-container', {
+    theme: 'snow',
+    placeholder: 'Write your post...',
+    modules: {
+      toolbar: [
+        [{ header: [2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'blockquote'],
+        ['clean']
+      ]
+    }
+  });
+
+  document.querySelector('form').addEventListener('submit', function () {
+    document.getElementById('content-input').value = quill.root.innerHTML;
+  });
+</script>

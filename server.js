@@ -82,6 +82,7 @@ app.use('/', require('./routes/index'));
 app.use('/', require('./routes/auth'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/booking', require('./routes/booking'));
+app.use('/blog', require('./routes/blog'));
 app.use('/admin', require('./routes/admin'));
 
 app.use((req, res) => {
