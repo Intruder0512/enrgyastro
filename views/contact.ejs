@@ -3,11 +3,7 @@
   <p>Have a question before booking? Reach out directly:</p>
   <div style="display:flex;gap:12px;flex-wrap:wrap;">
     <a class="btn btn-primary" href="https://wa.me/<%= process.env.WHATSAPP_NUMBER || '' %>" target="_blank" rel="noopener">Message on WhatsApp</a>
-    <% if (process.env.FACEBOOK_URL) { %>
-      <a class="btn btn-outline" href="<%= process.env.FACEBOOK_URL %>" target="_blank" rel="noopener">Follow on Facebook</a>
-    <% } %>
-    <% if (process.env.INSTAGRAM_URL) { %>
-      <a class="btn btn-outline" href="<%= process.env.INSTAGRAM_URL %>" target="_blank" rel="noopener">Follow on Instagram</a>
-    <% } %>
+    <a class="btn btn-outline" href="https://www.facebook.com/profile.php?id=61591600125599" target="_blank" rel="noopener">Follow on Facebook</a>
+    <a class="btn btn-outline" href="https://www.instagram.com/icaslucknowchapter/" target="_blank" rel="noopener">Follow on Instagram</a>
   </div>
 </section>
