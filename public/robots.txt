@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard$
+Disallow: /dashboard/appointments
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /booking/slots
+
+Sitemap: https://energyastro.com/sitemap.xml

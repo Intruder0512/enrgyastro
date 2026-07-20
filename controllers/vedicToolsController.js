@@ -14,6 +14,7 @@ exports.showToolsIndex = (req, res) => {
 exports.showForm = (req, res) => {
   const tool = TOOLS[req.params.type];
   if (!tool) return res.status(404).render('error', { title: 'Not Found', message: 'Unknown calculator.' });
+  res.locals.metaDescription = tool.description;
   res.render('astro/tool-form', { title: tool.label, tool, type: req.params.type });
 };
 

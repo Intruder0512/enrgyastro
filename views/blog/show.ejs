@@ -33,3 +33,16 @@
 
   <a href="/blog" class="btn btn-outline" style="margin-top:20px;">&larr; Back to Blog</a>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": <%- JSON.stringify(post.title) %>,
+  "image": <%- JSON.stringify(ogImage) %>,
+  "datePublished": "<%= (post.publishedAt || post.createdAt).toISOString() %>",
+  "dateModified": "<%= post.updatedAt.toISOString() %>",
+  "author": { "@type": "Organization", "name": "EnrgyAstro" },
+  "publisher": { "@type": "Organization", "name": "EnrgyAstro" }
+}
+</script>

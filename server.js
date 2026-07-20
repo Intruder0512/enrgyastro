@@ -12,6 +12,7 @@ const connectDB = require('./config/db');
 const seed = require('./utils/seedData');
 const { attachUser } = require('./middleware/auth');
 const { toolIcons, serviceIcons } = require('./utils/icons');
+const { getMetaForPath, SITE_NAME } = require('./utils/seoMeta');
 
 // Fail fast with a clear message rather than letting a missing env var
 // surface as a cryptic assertion from a dependency deep in the stack
@@ -75,6 +76,29 @@ app.use((req, res, next) => {
   res.locals.assetV = process.env.ASSET_VERSION || '20260713a';
   res.locals.toolIcons = toolIcons;
   res.locals.serviceIcons = serviceIcons;
+
+  // SEO: sensible per-page defaults; controllers can still override
+  // res.locals.metaDescription / metaKeywords / ogImage before rendering
+  // for content-specific pages (blog posts, generic tool pages).
+  const meta = getMetaForPath(req.path);
+  res.locals.siteName = SITE_NAME;
+  res.locals.metaDescription = meta.description;
+  res.locals.metaKeywords = meta.keywords;
+  res.locals.canonicalUrl = (process.env.BASE_URL || '').replace(/\/$/, '') + req.originalUrl;
+  res.locals.ogImage = (process.env.BASE_URL || '').replace(/\/$/, '') + '/images/vedic-astrology-consultation-lord-shiva-background.jpg';
+
+  // Keep private/dynamic areas out of search results. Important: most of
+  // /dashboard/* is actually public (the free calculator forms — Kundli,
+  // Matching, Numerology, etc.) and are exactly the pages worth ranking for
+  // "free kundli online" style searches, so only the truly private account
+  // pages are excluded here, not the whole /dashboard prefix.
+  const privateDashboardPaths = ['/dashboard', '/dashboard/appointments'];
+  res.locals.noindex =
+    privateDashboardPaths.includes(req.path) || req.path.startsWith('/dashboard/appointments/') ||
+    req.path === '/admin' || req.path.startsWith('/admin/') ||
+    req.path === '/login' || req.path === '/register' ||
+    req.path === '/booking/slots';
+
   next();
 });
 

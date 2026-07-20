@@ -175,7 +175,7 @@ h3 { font-weight: 700; }
 .hero { position: relative; padding: 90px 0; overflow: hidden; min-height: 560px; display: flex; align-items: center; }
 .hero-bg {
   position: absolute; inset: 0;
-  background-image: url('/images/hero-shiva.jpg');
+  background-image: url('/images/vedic-astrology-consultation-lord-shiva-background.jpg');
   background-size: cover;
   background-position: center 20%;
   filter: saturate(1.05);

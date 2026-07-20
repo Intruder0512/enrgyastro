@@ -3,11 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> | EnrgyAstro</title>
+  <title><%= title %> | <%= siteName %></title>
+
+  <meta name="description" content="<%= metaDescription %>">
+  <meta name="keywords" content="<%= metaKeywords %>">
+  <meta name="robots" content="<%= noindex ? 'noindex, nofollow' : 'index, follow' %>">
+  <link rel="canonical" href="<%= canonicalUrl %>">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= siteName %>">
+  <meta property="og:title" content="<%= title %> | <%= siteName %>">
+  <meta property="og:description" content="<%= metaDescription %>">
+  <meta property="og:url" content="<%= canonicalUrl %>">
+  <meta property="og:image" content="<%= ogImage %>">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= title %> | <%= siteName %>">
+  <meta name="twitter:description" content="<%= metaDescription %>">
+  <meta name="twitter:image" content="<%= ogImage %>">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=<%= assetV %>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "<%= siteName %>",
+    "description": "Personal Vedic astrology consultations — Kundli, Panchang, Kundli Matching, Palm Reading and Vastu, online or in person.",
+    "url": "<%= (process.env.BASE_URL || '').replace(/\/$/, '') %>",
+    "image": "<%= ogImage %>",
+    "priceRange": "₹₹",
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=61591600125599",
+      "https://www.instagram.com/icaslucknowchapter/"
+    ]
+  }
+  </script>
 </head>
 <body>
   <%- include('../partials/header') %>

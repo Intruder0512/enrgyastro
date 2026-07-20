@@ -32,5 +32,17 @@ exports.showPost = async (req, res) => {
     .sort('-publishedAt')
     .limit(3);
 
+  // Override the default site-wide meta tags with content specific to this post
+  const plainText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  res.locals.metaDescription = post.excerpt || plainText.slice(0, 160);
+  res.locals.metaKeywords = post.title
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 3)
+    .join(', ');
+  if (post.coverImage) {
+    res.locals.ogImage = (process.env.BASE_URL || '').replace(/\/$/, '') + post.coverImage;
+  }
+
   res.render('blog/show', { title: post.title, post, embedUrl, related });
 };
